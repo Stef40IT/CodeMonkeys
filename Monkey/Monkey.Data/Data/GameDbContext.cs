@@ -1,7 +1,7 @@
-﻿using codeMonkeys.Models;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
+using Monkey.Data.Data.Configs;
 
-namespace codeMonkeys.Data
+namespace Monkey.Data.Data.Entities
 {
     public class GameDbContext : DbContext
     {
@@ -19,7 +19,13 @@ namespace codeMonkeys.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            
+            base.OnModelCreating(modelBuilder);
+            modelBuilder.ApplyConfiguration(new GameConfig());
+            modelBuilder.ApplyConfiguration(new UserConfig());
+            modelBuilder.ApplyConfiguration(new ReservationConfig());
+            modelBuilder.ApplyConfiguration(new RatingConfig());
+            modelBuilder.ApplyConfiguration(new FavoritesConfig());
+            modelBuilder.ApplyConfiguration(new CommentConfig());
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿namespace codeMonkeys.Models
+﻿namespace Monkey.Data.Data.Entities
 {
     public class Comment
     {
