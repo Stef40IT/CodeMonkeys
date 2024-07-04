@@ -12,9 +12,9 @@ namespace Monkey.Data.Data.Configs
     {
         public void Configure(EntityTypeBuilder<Entities.Reservation> builder)
         {
-            builder.HasKey(e => e.ReservationId);
-            builder.Property(e => e.User).IsRequired();
-            builder.Property(e => e.Game).IsRequired();
+            builder.HasKey(e => e.Id);
+            builder.Property(e => e.UserId).IsRequired();
+            builder.Property(e => e.GameId).IsRequired();
             builder.Property(e => e.BookDate).IsRequired();
             builder.Property(e => e.ReturnDate).IsRequired();
             builder.ToTable("Reservations");
