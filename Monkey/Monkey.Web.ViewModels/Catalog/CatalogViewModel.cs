@@ -1,6 +1,14 @@
-﻿namespace Monkey.Data.Data.Entities
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Xml.Linq;
+using Monkey.Data.Data.Entities;
+
+namespace Monkey.Web.ViewModels.Catalog
 {
-    public class Game : IIdentifiable
+    public class CatalogViewModel
     {
         public int Id { get; set; }
         public string Description { get; set; }
