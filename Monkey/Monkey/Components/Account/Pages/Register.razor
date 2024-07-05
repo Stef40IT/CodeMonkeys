@@ -129,6 +129,7 @@
     {
         [Required]
         [EmailAddress]
+        [RegularExpression(@"^[a-zA-Z0-9._%+-]+@(gmail\.com|abv\.com)$", ErrorMessage = "Only emails from gmail.com and abv.com domains are allowed.")]
         [Display(Name = "Email")]
         public string Email { get; set; } = "";
 
@@ -144,3 +145,4 @@
         public string ConfirmPassword { get; set; } = "";
     }
 }
+
