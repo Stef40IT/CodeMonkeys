@@ -1,19 +1,37 @@
 ﻿@page "/counter"
+@using Monkey.Data
+@using Monkey.Data.Data.Entities;
 @rendermode InteractiveServer
+@inject ApplicationDbContext dbContext;
 
 <PageTitle>Counter</PageTitle>
 
-<h1>Counter</h1>
 
-<p role="status">Current count: @currentCount</p>
+<h1>Table</h1>
+<table>
+    <thead>
+        <th>Id</th>
+        <th>Name</th>
+        <th>Email</th>
+    </thead>
+    <tbody>
+        @foreach(var user in users)
+        {
+            <tr>
+                <td>@user.Id</td>
+                <td>@user.UserName</td>
+                <td>@user.Email</td>
+            </tr>
+        }
+    </tbody>
+</table>
 
-<button class="btn btn-primary" @onclick="IncrementCount">Click me</button>
+@code{
+    List<ApplicationUser> users = new List<ApplicationUser>();
 
-@code {
-    private int currentCount = 0;
-
-    private void IncrementCount()
+    protected override async Task OnInitializedAsync()
     {
-        currentCount++;
+        users = dbContext.Set<ApplicationUser>().ToList();
     }
 }
+
