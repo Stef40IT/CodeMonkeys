@@ -1,0 +1,63 @@
+﻿@page "/catalog"
+@rendermode InteractiveServer
+@using Monkey.Core.Projections.Games
+@using Monkey.Data.Data.Entities;
+@using System.Collections.Generic;
+@using Monkey.Core.Services.GameServices;
+@using Monkey.Core.Projections;
+
+<PageTitle>Каталог</PageTitle>
+
+<h1>Каталог</h1>
+
+ <div class="game-container">
+    @foreach (var game in GameList)
+    {
+        <div class="game">
+            <tr>
+                <td>
+                    <div class="game-name">@game.Name</div>
+                </td>
+
+            </tr>
+        </div>
+    }
+</div>
+
+
+@inject IGameService gameService;
+@code {
+    List<GameGeneralInfoProjection> GameList = new List<GameGeneralInfoProjection>();
+
+    protected override async Task OnInitializedAsync() =>
+        GameList = (await gameService.GetAllGames()).ToList();
+}
+
+<style>
+    .item-container {
+        display: flex;
+        justify-content: space-around;
+        flex-wrap: wrap;
+    }
+
+    .item {
+        margin: 10px;
+        text-align: center;
+    }
+
+    .image-button {
+        border: none;
+        background: none;
+        padding: 0;
+    }
+
+    .item-image {
+        width: 100px;
+        height: 150px;
+        object-fit: cover;
+    }
+
+    .item-name {
+        margin-top: 5px;
+    }
+</style>
