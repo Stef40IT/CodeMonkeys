@@ -6,19 +6,35 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using Microsoft.EntityFrameworkCore;
 using Monkey.Core.Projections.Games;
 using Monkey.Data;
 using Monkey.Data.Data.Entities;
 using Monkey.Data.Data.Repositories;
+using Monkey.Web.ViewModels.Game;
 
 namespace Monkey.Core.Services.GameServices
 {
     public class GameService : BaseService<Game>, IGameService
     {
+
         public GameService(IRepository<Game> repository)
             : base(repository)
         { }
+        public  void AddGame(GameViewModel gameViewModel)
+        {
+            var game = new Game
+            {
+                Name = gameViewModel.Name,
+                Description = gameViewModel.Description,
+                Difficulty = gameViewModel.Difficulty,
+                Count = gameViewModel.Count,
+                Picture = gameViewModel.Picture ?? "",
+            };
 
+            this.Repository.Create(game);
+            
+        }
         public async Task<IEnumerable<GameGeneralInfoProjection>> GetAllGames()
         {
             return Repository.GetMany(_ => true, g => new GameGeneralInfoProjection
