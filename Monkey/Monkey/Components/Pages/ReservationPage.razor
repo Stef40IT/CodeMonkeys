@@ -1,0 +1,62 @@
+﻿@page "/Reservation"
+@rendermode InteractiveServer
+@using Monkey.Core.Projections.Games
+@using Monkey.Data.Data.Entities;
+@using System.Collections.Generic;
+@using Monkey.Core.Services.GameServices;
+@using Monkey.Core.Services.ReservatioService;
+@using Monkey.Data.Data.Repositories
+@using Monkey.Core.Projections;
+@inject IGameService gameService
+@inject IReservationService reservService
+
+
+<PageTitle>Reserve</PageTitle>
+
+
+<div>
+    <label>Textbox 1:</label>
+    <input type="text" @bind="game" />
+</div>
+<div>
+    <label>Textbox 2:</label>
+    <input type="text" @bind="bookDate" />
+</div>
+<div>
+    <label>Textbox 3:</label>
+    <input type="text" @bind="returnDate" />
+</div>
+<div>
+    <button @onclick="Add">reserve</button>
+</div>
+<div>
+    <button @onclick="show">show</button>
+</div>
+
+@code {
+    private string game;
+    private string bookDate;
+    private string returnDate;
+    Reservation reserv;
+
+    public void Add()
+    {
+        reserv.Game = gameService.GetByName(game).Result;
+        reserv.BookDate = DateTime.Parse(bookDate);
+        reserv.ReturnDate = DateTime.Parse(returnDate);
+        reserv.User = new User
+        {
+            Id = 1,
+            Name = "hris",
+            Email = "hris",
+            Password = "hris",
+            IsAdmin = true,
+        };
+        reservService.Create(reserv);
+    }
+
+    public void show()
+    {
+        
+    }
+}

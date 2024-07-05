@@ -12,6 +12,10 @@ namespace Monkey.Core.Services
     public class BaseService<TEntity> : IService<TEntity>
         where TEntity : class, IIdentifiable
     {
+        protected BaseService()
+        {
+            
+        }
         protected BaseService(IRepository<TEntity> repository)
         {
             Repository = repository ?? throw new ArgumentNullException(nameof(repository));

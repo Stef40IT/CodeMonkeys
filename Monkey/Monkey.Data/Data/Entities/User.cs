@@ -14,7 +14,7 @@ namespace Monkey.Data.Data.Entities
         public string Password { get; set; }
         public bool IsAdmin { get; set; }
 
-        public ICollection<Favorite> Favorites { get; set; }
-        public ICollection<Reservation> Reservations { get; set; }
+        public ICollection<Favorite>? Favorites { get; set; }
+        public ICollection<Reservation>? Reservations { get; set; }
     }
 }

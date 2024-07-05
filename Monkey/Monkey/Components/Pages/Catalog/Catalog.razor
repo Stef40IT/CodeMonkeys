@@ -29,8 +29,8 @@
 @code {
     List<GameGeneralInfoProjection> GameList = new List<GameGeneralInfoProjection>();
 
-    protected override async Task OnInitializedAsync() =>
-        GameList = (await gameService.GetAllGames()).ToList();
+    // protected override async Task OnInitializedAsync() =>
+    //     GameList = (await gameService.GetAllGames()).ToList();
 }
 
 <style>

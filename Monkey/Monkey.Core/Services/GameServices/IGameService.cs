@@ -10,8 +10,10 @@ namespace Monkey.Core.Services.GameServices
 {
     public interface IGameService : IService<Game>
     {
-        Task<IEnumerable<GameGeneralInfoProjection>> GetAllGames();
-        GameGeneralInfoProjection? GetOne(int id);
-        GameEditProjection? GetOneEdit(int id);
+        public Task<Game> GetByName(string name);
+        //Task<IEnumerable<GameGeneralInfoProjection>> GetAllGames();
+        //GameGeneralInfoProjection? GetOne(int id);
+        //GameEditProjection? GetOneEdit(int id);
+        //Game? GetOneByName(string name);
     }
 }

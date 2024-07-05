@@ -6,6 +6,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using Microsoft.EntityFrameworkCore;
 using Monkey.Core.Projections.Games;
 using Monkey.Data;
 using Monkey.Data.Data.Entities;
@@ -15,85 +16,16 @@ namespace Monkey.Core.Services.GameServices
 {
     public class GameService : BaseService<Game>, IGameService
     {
-        public GameService(IRepository<Game> repository)
-            : base(repository)
-        { }
-
-        public async Task<IEnumerable<GameGeneralInfoProjection>> GetAllGames()
+        private readonly ApplicationDbContext _context;
+        public GameService(ApplicationDbContext dbContext)
+            : base()
         {
-            return Repository.GetMany(_ => true, g => new GameGeneralInfoProjection
-            {
-                Id = g.Id,
-                Name = g.Name,
-                Description = g.Description,
-                Picture = g.Picture,
-                Difficulty = g.Difficulty,
-                Count = g.Count,
-                Comments = g.Comments,
-                Raitings = g.Raitings,
-                Reservations = g.Reservations,
-                isBooked = g.isBooked
-
-            });
+            _context = dbContext;
         }
 
-        public GameGeneralInfoProjection? GetById(int id)
+        public async Task<Game> GetByName(string name)
         {
-            return Repository.Get(g => g.Id == id, g => new GameGeneralInfoProjection
-            {
-                Id = g.Id,
-                Name = g.Name,
-                Description = g.Description,
-                Picture = g.Picture,
-                Difficulty = g.Difficulty,
-                Count = g.Count,
-                Comments = g.Comments,
-                Raitings = g.Raitings,
-                Reservations = g.Reservations,
-                isBooked = g.isBooked
-
-            });
-
-        }
-
-        public GameGeneralInfoProjection? GetOne(int id)
-        {
-            return Repository.Get(g => g.Id == id, GetGeneralInfoInformation());
-        }
-
-        public GameEditProjection? GetOneEdit(int id)
-        {
-            return Repository.Get(g => g.Id == id, g => new GameEditProjection
-            {
-                Id = g.Id,
-                Name = g.Name,
-                Description = g.Description,
-                Picture = g.Picture,
-                Difficulty = g.Difficulty,
-                Count = g.Count,
-                Comments = g.Comments,
-                Raitings = g.Raitings,
-                Reservations = g.Reservations,
-                isBooked = g.isBooked
-
-            });
-        }
-        private Expression<Func<Game, GameGeneralInfoProjection>> GetGeneralInfoInformation()
-        {
-            return g => new GameGeneralInfoProjection
-            {
-                Id = g.Id,
-                Name = g.Name,
-                Description = g.Description,
-                Picture = g.Picture,
-                Difficulty = g.Difficulty,
-                Count = g.Count,
-                Comments = g.Comments,
-                Raitings = g.Raitings,
-                Reservations = g.Reservations,
-                isBooked = g.isBooked
-
-            };
+            return await _context.Games.FirstOrDefaultAsync(g => g.Name == name);
         }
     }
 }
