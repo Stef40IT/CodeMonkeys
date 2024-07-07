@@ -41,4 +41,8 @@
     <None Include="Components\Pages\Game.razor" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\uploadedImages\" />
+  </ItemGroup>
+
 </Project>
