@@ -39,20 +39,19 @@
     private DateTime returnDate = DateTime.Today;
     Reservation reserv;
     Game game;
-    User user;
+    ApplicationUser user;
 
     protected override void OnInitialized()
     {
         game = new Game();
         reserv = new Reservation();
-        user = new User();
+        user = new ApplicationUser();
     }
 
     private async void Add()
     {
-        await Task.Delay(500);
         game = await gameService.GetByName(gameName);
-        user = await userService.GetById(1);
+        user = await userService.GetById("5234fs");
 
         if (!game.isBooked)
         {
@@ -72,7 +71,7 @@
 
         game = new Game();
         reserv = new Reservation();
-        user = new User();
+        user = new ApplicationUser();
         NavManager.NavigateTo("/catalog");
     }
 }

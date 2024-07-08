@@ -12,7 +12,7 @@ namespace Monkey.Data
         {
 
         }
-        public DbSet<User> Users { get; set; }
+        public DbSet<ApplicationUser> Users { get; set; }
         public DbSet<Game> Games { get; set; }
         public DbSet<Reservation> Reservations { get; set; }
         public DbSet<Rating> Ratings { get; set; }
@@ -23,7 +23,7 @@ namespace Monkey.Data
         {
             base.OnModelCreating(modelBuilder);
             modelBuilder.ApplyConfiguration(new GameConfig());
-            modelBuilder.ApplyConfiguration(new UserConfig());
+            modelBuilder.ApplyConfiguration(new ApplicationUserConfig());
             modelBuilder.ApplyConfiguration(new ReservationConfig());
             modelBuilder.ApplyConfiguration(new RatingConfig());
             modelBuilder.ApplyConfiguration(new FavoritesConfig());
