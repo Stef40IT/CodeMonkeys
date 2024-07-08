@@ -1,124 +1,65 @@
 ﻿@page "/catalog"
 @rendermode InteractiveServer
 @using Monkey.Core.Projections.Games
-@using Monkey.Data.Data.Entities;
-@using System.Collections.Generic;
-@using Monkey.Core.Services.GameServices;
-@using Monkey.Core.Projections;
+@using Monkey.Data.Data.Entities
+@using Monkey.Core.Services.GameServices
+@using Monkey.Core.Projections
+@using Monkey.Web.ViewModels.Catalog
 
 <PageTitle>Каталог</PageTitle>
 
-<h1>Каталог</h1>
-<div>
-    <label for="sort">Sort by: </label>
-    <select  id="sort" @bind="SelectedCriteria">
-        <option value="">Select Sorting Criteria</option>
-        <option value="Name">Name(^)</option>
-        <option value="Name(Descending)">Name(_)</option>
-        <option value="Difficulty">Difficulty</option>
-        @*<option value="Rating">Rating</option>
-        <option value="NumberOfPlayers">Number of Players</option>*@
-    </select>
-</div>
- <div class="game-container">
-    @if (GameList == null)
-    {
-        <p><em>Loading...</em></p>
-    }
-    else
-    {
-        @foreach (var game in sortedGames)
+<h1 class="catalog-title">Каталог</h1>
+<div class="title-underline"></div>
+
+<div class="game-container">
+    <div class="game-grid">
+        @if (GameList == null || !GameList.Any())
         {
-            <div class="game">
-                <tr>
-                    <td>
-                        <div>
-                            <img src="@game.Picture" class="game-image">
-                        </div>
-                        <div class="game-name">
-                            @game.Name
-                        </div>
-                    </td>
-                </tr>
-            </div>
+            <p>Loading games...</p>
         }
-    }
+        else
+        {
+            @foreach (var gameRow in GameList.Chunk(4))
+            {
+                <div class="game-row">
+                    @foreach (var game in gameRow)
+                    {
+                        <div class="game-card" @onclick="() => OpenGameDetails(game.Id)">
+                            <img src="@game.Picture" alt="@game.Name" class="game-image" />
+                            <div class="game-info">
+                                <div class="game-name">@game.Name</div>
+                                <div class="game-count">Available: @game.Count</div>
+                                <div class="game-difficulty">Difficulty: @game.Difficulty</div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+        }
+    </div>
 </div>
 
-
-@inject IGameService gameService;
 @code {
-    List<GameGeneralInfoProjection> GameList = new List<GameGeneralInfoProjection>();
-    private List<GameGeneralInfoProjection> sortedGames;
-    private string selectedCriteria;
+    private List<GameGeneralInfoProjection> GameList;
+
     protected override async Task OnInitializedAsync()
     {
-        GameList = (await gameService.GetAllGames()).ToList();
-        sortedGames = GameList;
-    }   
-    private string SelectedCriteria
+        GameList = (await gameService.GetAllGames()).Take(20).ToList();
+    }
+
+    [Inject]
+    private IGameService gameService { get; set; }
+
+    private void OpenGameDetails(int gameId)
     {
-        get => selectedCriteria;
-        set
-        {
-            selectedCriteria = value;
-            OnCriteriaChanged();
-        }
-    }
-    private void OnCriteriaChanged()
-    {
-        if (string.IsNullOrEmpty(selectedCriteria))
-        {
-            sortedGames = GameList;
-            return;
-        }
-
-        switch (selectedCriteria)
-        {
-            case "Difficulty":
-                sortedGames = GameList.OrderBy(g => g.Difficulty).ToList();
-                break;
-            case "Name":
-                sortedGames = GameList.OrderBy(g => g.Name).ToList();
-                break;
-            case "Name(Descending)":
-                sortedGames = GameList.OrderByDescending(g => g.Name).ToList();
-                break;
-
-            default:
-                sortedGames = GameList;
-                break;
-        }
-    }
-}
-
-<style>
-    .game-container {
-        display: flex;
-        justify-content: space-around;
-        
-        flex-wrap: wrap;
+        // Navigate to game details page or handle the click event as needed
+        // Example: NavigationManager.NavigateTo($"/game/details/{gameId}");
+        // Replace with your actual navigation logic
     }
 
-    .game {
-        margin: 10px;
-        border-style: groove;
-        text-align: center;
-    }
-
-    .image-button {
-        border: none;
-        background: none;
-        padding: 0;
-    }
-
-    .game-image {
+    .item-image {
         width: 100px;
         height: 150px;
         object-fit: cover;
     }
 
-    .game-name {
-        margin-top: 5px;
-    }
-</style>
