@@ -27,4 +27,12 @@
     <ProjectReference Include="..\Monkey.Web.ViewModels\Monkey.Web.ViewModels.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Include="Components\Pages\GamePage.razor" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="wwwroot\uploadedImages\" />
+  </ItemGroup>
+
 </Project>

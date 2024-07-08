@@ -13,6 +13,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Monkey.Data\Monkey.Data.csproj" />
+    <ProjectReference Include="..\Monkey.Web.ViewModels\Monkey.Web.ViewModels.csproj" />
   </ItemGroup>
 
 </Project>

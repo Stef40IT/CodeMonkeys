@@ -6,19 +6,35 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using Microsoft.EntityFrameworkCore;
 using Monkey.Core.Projections.Games;
 using Monkey.Data;
 using Monkey.Data.Data.Entities;
 using Monkey.Data.Data.Repositories;
+using Monkey.Web.ViewModels.Game;
 
 namespace Monkey.Core.Services.GameServices
 {
     public class GameService : BaseService<Game>, IGameService
     {
+
         public GameService(IRepository<Game> repository)
             : base(repository)
         { }
+        public  void AddGame(GameViewModel gameViewModel)
+        {
+            var game = new Game
+            {
+                Name = gameViewModel.Name,
+                Description = gameViewModel.Description,
+                Difficulty = gameViewModel.Difficulty,
+                Count = gameViewModel.Count,
+                Picture = gameViewModel.Picture ?? "",
+            };
 
+            this.Repository.Create(game);
+            
+        }
         public async Task<IEnumerable<GameGeneralInfoProjection>> GetAllGames()
         {
             return Repository.GetMany(_ => true, g => new GameGeneralInfoProjection
@@ -94,6 +110,40 @@ namespace Monkey.Core.Services.GameServices
                 isBooked = g.isBooked
 
             };
+        }
+
+        public async Task<Game> GetByName(string name)
+        {
+            return await Repository.GetDb().Games.FirstOrDefaultAsync(g => g.Name == name);
+        }
+
+        public async void UpdateCountDown(int id)
+        {
+            var entity = Repository.GetDb().Games.SingleOrDefault(g => g.Id == id);
+            if (entity != null)
+            {
+                entity.Count -= 1;
+                if (entity.Count == 0 && entity.isBooked == true)
+                {
+                    entity.isBooked = false;
+                }
+                await Repository.GetDb().SaveChangesAsync();
+            }
+        }
+        public async void UpdateCountUp(int id)
+        {
+            var entity = Repository.GetDb().Games.SingleOrDefault(g => g.Id == id);
+            if (entity != null)
+            {
+                entity.Count += 1;
+                if (entity.Count > 0 && entity.isBooked == false)
+                {
+                    entity.isBooked = true;
+                }
+                await Repository.GetDb().SaveChangesAsync();
+            }
+
+
         }
     }
 }
