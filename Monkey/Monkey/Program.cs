@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Monkey.Components;
 using Monkey.Components.Account;
+using Monkey.Core.Services.EmailServices;
 using Monkey.Core.Services.GameServices;
 using Monkey.Data;
 using Monkey.Data.Data.Entities;
@@ -21,7 +22,7 @@ builder.Services.AddScoped<IdentityRedirectManager>();
 builder.Services.AddScoped<AuthenticationStateProvider, IdentityRevalidatingAuthenticationStateProvider>();
 builder.Services.AddScoped<IRepository<Game>,Repository<Game>>();
 builder.Services.AddScoped<IGameService,GameService>();
-
+builder.Services.AddScoped<IEmailService, EmailService>();
 
 builder.Services.AddAuthentication(options =>
     {
@@ -41,6 +42,7 @@ builder.Services.AddIdentityCore<ApplicationUser>(options => options.SignIn.Requ
     .AddDefaultTokenProviders();
 
 builder.Services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSender>();
+
 
 var app = builder.Build();
 
