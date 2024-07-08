@@ -8,15 +8,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Monkey.Data.Data.Configs
 {
-    public class UserConfig : IEntityTypeConfiguration<Entities.User>
+    public class UserConfig : IEntityTypeConfiguration<Entities.ApplicationUser>
     {
-        public void Configure(EntityTypeBuilder<Entities.User> builder)
+        public void Configure(EntityTypeBuilder<Entities.ApplicationUser> builder)
         {
-            builder.HasKey(e => e.Id);
-            builder.Property(e => e.Name).IsRequired();
-            builder.Property(e => e.Email).IsRequired();
-            builder.Property(e => e.Password).IsRequired();
-            builder.Property(e => e.IsAdmin).IsRequired();
             builder.HasMany(f => f.Favorites).WithOne(e => e.User).HasForeignKey(c => c.UserId);
             builder.HasMany(f => f.Reservations).WithOne(e => e.User).HasForeignKey(c => c.UserId);
 

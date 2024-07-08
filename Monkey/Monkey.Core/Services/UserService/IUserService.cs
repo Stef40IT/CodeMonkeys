@@ -9,6 +9,6 @@ namespace Monkey.Core.Services.UserService
 {
     public interface IUserService
     {
-        public Task<User> GetById(int id);
+        public Task<ApplicationUser> GetById(string id);
     }
 }
