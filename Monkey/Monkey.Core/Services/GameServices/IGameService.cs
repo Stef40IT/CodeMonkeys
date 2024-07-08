@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Monkey.Web.ViewModels.Game;
 
 namespace Monkey.Core.Services.GameServices
 {
@@ -13,5 +14,6 @@ namespace Monkey.Core.Services.GameServices
         Task<IEnumerable<GameGeneralInfoProjection>> GetAllGames();
         GameGeneralInfoProjection? GetOne(int id);
         GameEditProjection? GetOneEdit(int id);
+        void AddGame(GameViewModel gameViewModel);
     }
 }
