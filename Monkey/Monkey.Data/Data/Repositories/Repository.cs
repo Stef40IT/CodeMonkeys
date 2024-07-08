@@ -69,5 +69,7 @@ namespace Monkey.Data.Data.Repositories
             this._dbContext.Set<TEntity>().Update(entity);
             this._dbContext.SaveChanges();  
         }
+
+        public ApplicationDbContext GetDb() { return this._dbContext; }
     }
 }

@@ -27,5 +27,7 @@ namespace Monkey.Data.Data.Repositories
             Expression<Func<TEntity, TProjection>> projection);
         IEnumerable<TProjection> GetMany<TProjection>(Expression<Func<TEntity, bool>> filter,
             Expression<Func<TEntity, TProjection>> projection, IEnumerable<IOrderClause<TEntity>> orderClauses);
+
+        public ApplicationDbContext GetDb();
     }
 }
