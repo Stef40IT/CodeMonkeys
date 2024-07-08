@@ -1,63 +1,60 @@
 ﻿@page "/catalog"
 @rendermode InteractiveServer
 @using Monkey.Core.Projections.Games
-@using Monkey.Data.Data.Entities;
-@using System.Collections.Generic;
-@using Monkey.Core.Services.GameServices;
-@using Monkey.Core.Projections;
+@using Monkey.Data.Data.Entities
+@using Monkey.Core.Services.GameServices
+@using Monkey.Core.Projections
+@using Monkey.Web.ViewModels.Catalog
 
 <PageTitle>Каталог</PageTitle>
 
-<h1>Каталог</h1>
+<h1 class="catalog-title">Каталог</h1>
+<div class="title-underline"></div>
 
- <div class="game-container">
-    @foreach (var game in GameList)
-    {
-        <div class="game">
-            <tr>
-                <td>
-                    <div class="game-name">@game.Name</div>
-                </td>
-
-            </tr>
-        </div>
-    }
+<div class="game-container">
+    <div class="game-grid">
+        @if (GameList == null || !GameList.Any())
+        {
+            <p>Loading games...</p>
+        }
+        else
+        {
+            @foreach (var gameRow in GameList.Chunk(4))
+            {
+                <div class="game-row">
+                    @foreach (var game in gameRow)
+                    {
+                        <div class="game-card" @onclick="() => OpenGameDetails(game.Id)">
+                            <img src="@game.Picture" alt="@game.Name" class="game-image" />
+                            <div class="game-info">
+                                <div class="game-name">@game.Name</div>
+                                <div class="game-count">Available: @game.Count</div>
+                                <div class="game-difficulty">Difficulty: @game.Difficulty</div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+        }
+    </div>
 </div>
 
-
-@inject IGameService gameService;
 @code {
-    List<GameGeneralInfoProjection> GameList = new List<GameGeneralInfoProjection>();
+    private List<GameGeneralInfoProjection> GameList;
 
-    protected override async Task OnInitializedAsync() =>
-        GameList = (await gameService.GetAllGames()).ToList();
+    protected override async Task OnInitializedAsync()
+    {
+        GameList = (await gameService.GetAllGames()).Take(20).ToList();
+    }
+
+    [Inject]
+    private IGameService gameService { get; set; }
+
+    private void OpenGameDetails(int gameId)
+    {
+        // Navigate to game details page or handle the click event as needed
+        // Example: NavigationManager.NavigateTo($"/game/details/{gameId}");
+        // Replace with your actual navigation logic
+    }
 }
 
-<style>
-    .item-container {
-        display: flex;
-        justify-content: space-around;
-        flex-wrap: wrap;
-    }
-
-    .item {
-        margin: 10px;
-        text-align: center;
-    }
-
-    .image-button {
-        border: none;
-        background: none;
-        padding: 0;
-    }
-
-    .item-image {
-        width: 100px;
-        height: 150px;
-        object-fit: cover;
-    }
-
-    .item-name {
-        margin-top: 5px;
-    }
-</style>
