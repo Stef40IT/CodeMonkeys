@@ -9,18 +9,39 @@
 <PageTitle>Каталог</PageTitle>
 
 <h1>Каталог</h1>
-
+<div>
+    <label for="sort">Sort by: </label>
+    <select  id="sort" @bind="SelectedCriteria">
+        <option value="">Select Sorting Criteria</option>
+        <option value="Name">Name(^)</option>
+        <option value="Name(Descending)">Name(_)</option>
+        <option value="Difficulty">Difficulty</option>
+        @*<option value="Rating">Rating</option>
+        <option value="NumberOfPlayers">Number of Players</option>*@
+    </select>
+</div>
  <div class="game-container">
-    @foreach (var game in GameList)
+    @if (GameList == null)
     {
-        <div class="game">
-            <tr>
-                <td>
-                    <div class="game-name">@game.Name</div>
-                </td>
-
-            </tr>
-        </div>
+        <p><em>Loading...</em></p>
+    }
+    else
+    {
+        @foreach (var game in sortedGames)
+        {
+            <div class="game">
+                <tr>
+                    <td>
+                        <div>
+                            <img src="@game.Picture" class="game-image">
+                        </div>
+                        <div class="game-name">
+                            @game.Name
+                        </div>
+                    </td>
+                </tr>
+            </div>
+        }
     }
 </div>
 
@@ -28,20 +49,60 @@
 @inject IGameService gameService;
 @code {
     List<GameGeneralInfoProjection> GameList = new List<GameGeneralInfoProjection>();
-
-    protected override async Task OnInitializedAsync() =>
+    private List<GameGeneralInfoProjection> sortedGames;
+    private string selectedCriteria;
+    protected override async Task OnInitializedAsync()
+    {
         GameList = (await gameService.GetAllGames()).ToList();
+        sortedGames = GameList;
+    }   
+    private string SelectedCriteria
+    {
+        get => selectedCriteria;
+        set
+        {
+            selectedCriteria = value;
+            OnCriteriaChanged();
+        }
+    }
+    private void OnCriteriaChanged()
+    {
+        if (string.IsNullOrEmpty(selectedCriteria))
+        {
+            sortedGames = GameList;
+            return;
+        }
+
+        switch (selectedCriteria)
+        {
+            case "Difficulty":
+                sortedGames = GameList.OrderBy(g => g.Difficulty).ToList();
+                break;
+            case "Name":
+                sortedGames = GameList.OrderBy(g => g.Name).ToList();
+                break;
+            case "Name(Descending)":
+                sortedGames = GameList.OrderByDescending(g => g.Name).ToList();
+                break;
+
+            default:
+                sortedGames = GameList;
+                break;
+        }
+    }
 }
 
 <style>
-    .item-container {
+    .game-container {
         display: flex;
         justify-content: space-around;
+        
         flex-wrap: wrap;
     }
 
-    .item {
+    .game {
         margin: 10px;
+        border-style: groove;
         text-align: center;
     }
 
@@ -51,13 +112,13 @@
         padding: 0;
     }
 
-    .item-image {
+    .game-image {
         width: 100px;
         height: 150px;
         object-fit: cover;
     }
 
-    .item-name {
+    .game-name {
         margin-top: 5px;
     }
 </style>

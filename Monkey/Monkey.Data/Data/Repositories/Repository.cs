@@ -56,7 +56,7 @@ namespace Monkey.Data.Data.Repositories
         public IEnumerable<TProjection> GetMany<TProjection>(Expression<Func<TEntity, bool>> filter, Expression<Func<TEntity, TProjection>> projection, IEnumerable<IOrderClause<TEntity>> orderClauses)
         {
             throw new NotImplementedException();
-            //return  _dbContext.Set<TEntity>().Where(filter).OrderBy(orderClauses).Select(projection).ToList();
+            //return _dbContext.Set<TEntity>().Where(filter).OrderBy(orderClauses).Select(projection).ToList();
         }
 
         public TEntity? GetWithNavigations(Expression<Func<TEntity, bool>> filter, IEnumerable<string> navigations)
