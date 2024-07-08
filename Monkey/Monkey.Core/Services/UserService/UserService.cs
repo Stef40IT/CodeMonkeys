@@ -18,7 +18,7 @@ namespace Monkey.Core.Services.UserService
             _dbContext = dbContext;
         }
 
-        public async Task<User> GetById(int id)
+        public async Task<ApplicationUser> GetById(string id)
         {
             return await _dbContext.Users.FirstOrDefaultAsync(u => u.Id == id);
         }
