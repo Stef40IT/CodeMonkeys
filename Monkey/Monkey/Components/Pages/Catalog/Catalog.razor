@@ -5,12 +5,23 @@
 @using Monkey.Core.Services.GameServices
 @using Monkey.Core.Projections
 @using Monkey.Web.ViewModels.Catalog
+@inject NavigationManager NavManager
 
 <PageTitle>Каталог</PageTitle>
 
 <h1 class="catalog-title">Каталог</h1>
 <div class="title-underline"></div>
-
+<div>
+    <label for="sort">Sort by: </label>
+    <select id="sort" @bind="SelectedCriteria">
+        <option value="">Select Sorting Criteria</option>
+        <option value="Name">Name(^)</option>
+        <option value="Name(Descending)">Name(_)</option>
+        <option value="Difficulty">Difficulty</option>
+        @*<option value="Rating">Rating</option>
+        <option value="NumberOfPlayers">Number of Players</option>*@
+    </select>
+</div>
 <div class="game-container">
     <div class="game-grid">
         @if (GameList == null || !GameList.Any())
@@ -19,7 +30,7 @@
         }
         else
         {
-            @foreach (var gameRow in GameList.Chunk(4))
+            @foreach (var gameRow in sortedGames.Chunk(4))
             {
                 <div class="game-row">
                     @foreach (var game in gameRow)
@@ -41,25 +52,49 @@
 
 @code {
     private List<GameGeneralInfoProjection> GameList;
-
+    private List<GameGeneralInfoProjection> sortedGames;
+    private string selectedCriteria;
     protected override async Task OnInitializedAsync()
     {
         GameList = (await gameService.GetAllGames()).Take(20).ToList();
+        sortedGames = GameList;
     }
+    private string SelectedCriteria
+    {
+        get => selectedCriteria;
+        set
+        {
+            selectedCriteria = value;
+            OnCriteriaChanged();
+        }
+    }
+    private void OnCriteriaChanged()
+    {
+        if (string.IsNullOrEmpty(selectedCriteria))
+        {
+            sortedGames = GameList;
+            return;
+        }
 
+        switch (selectedCriteria)
+        {
+            case "Difficulty":
+                sortedGames = GameList.OrderBy(g => g.Difficulty).ToList();
+                break;
+            case "Name":
+                sortedGames = GameList.OrderBy(g => g.Name).ToList();
+                break;
+            case "Name(Descending)":
+                sortedGames = GameList.OrderByDescending(g => g.Name).ToList();
+                break;
+
+            default:
+                sortedGames = GameList;
+                break;
+        }
+    }
     [Inject]
     private IGameService gameService { get; set; }
 
-    private void OpenGameDetails(int gameId)
-    {
-        // Navigate to game details page or handle the click event as needed
-        // Example: NavigationManager.NavigateTo($"/game/details/{gameId}");
-        // Replace with your actual navigation logic
-    }
-
-    .item-image {
-        width: 100px;
-        height: 150px;
-        object-fit: cover;
-    }
-
+    private void OpenGameDetails(int gameId) => NavManager.NavigateTo("/game");
+}
