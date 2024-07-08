@@ -1,23 +1,68 @@
-﻿@page "/admin"
-<div class="Wishlist-container">
-    <h1>My Wishlist</h1>
-    <ul class="Wishlist">
+﻿@* @page "/admin"
+<div class="Любими-container">
+    <h1>Любими</h1>
+    <ul class="Любими">
         <li class="Wishlist-item">
-            <img src="item1.jpg" alt="Item 1" class="item-image">
-            <div class="item-details">
-                <h2 class="item-name">Item 1</h2>
-                <p class="item-description">Description of item 1.</p>
-                <button class="remove-button">Remove</button>
+            <img src="артикул1.jpg" alt="артикул 1" class="артикул-image">
+            <div class="артикул-details">
+                <h2 class="артикул-name">артикул 1</h2>
+                <p class="артикул-description">Описание на артикул 1.</p>
+                <button class="remove-button">Изтриване</button>
             </div>
         </li>
         <li class="Wishlist-item">
-            <img src="item2.jpg" alt="Item 2" class="item-image">
-            <div class="item-details">
-                <h2 class="item-name">Item 2</h2>
-                <p class="item-description">Description of item 2.</p>
-                <button class="remove-button">Remove</button>
+            <img src="артикул2.jpg" alt="артикул 2" class="артикул-image">
+            <div class="артикул-details">
+                <h2 class="артикул-name">артикул 2</h2>
+                <p class="артикул-description">Описание на артикул 2.</p>
+                <button class="remove-button">Изтриване</button>
             </div>
         </li>
         <!-- Add more items as needed -->
     </ul>
-</div>
+</div> *@
+@page "/favorites"
+@using Monkey.Data
+@inject ApplicationDbContext DbContext
+@inject AuthenticationStateProvider authenticationStateProvider
+
+<h3>My Favorites</h3>
+
+@if (favorites == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <ul>
+        @foreach (var favorite in favorites)
+        {
+            <li>
+                <img src="@favorite.Game.ImageUrl" alt="@favorite.Game.Title" style="width:100px;height:100px;">
+                <a href="/gamedetails/@favorite.Game.Id">@favorite.Game.Title</a>
+                <p>@favorite.Game.Genre</p>
+            </li>
+        }
+    </ul>
+}
+
+@code {
+    private List<UserFavorite> favorites;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var userId = (await authenticationStateProvider.GetAuthenticationStateAsync()).User.Identity.Name;
+        favorites = await DbContext.UserFavorites
+                                  .Where(uf => uf.UserId == userId)
+                                  .Include(uf => uf.Game)
+                                  .ToListAsync();
+    }
+    public class UserFavorite
+    {
+        public int Id { get; set; }
+        public string UserId { get; set; }
+        public int GameId { get; set; }
+        public Game Game { get; set; }
+    }
+
+}

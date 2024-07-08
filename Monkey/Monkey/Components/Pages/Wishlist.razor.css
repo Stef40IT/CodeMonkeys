@@ -1,4 +1,4 @@
-﻿.wishlist-container {
+﻿.Любими-container {
     max-width: 800px;
     margin: 50px auto;
     padding: 20px;
@@ -12,13 +12,15 @@ h1 {
     color: #333;
 }
 
-.wishlist {
+.Любими {
     list-style: none;
+    display: flex;
+    flex-direction: row;
     padding: 0;
     margin: 0;
 }
 
-.wishlist-item {
+.Любими-item {
     display: flex;
     align-items: center;
     padding: 15px;
