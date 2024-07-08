@@ -18,21 +18,21 @@ namespace Monkey.Core.Services.FavoriteServices
         {
             _context = context;
         }
-        public async Task<List<Game>> GetFavoriteGamesAsync(int userId)
+        public async Task<List<Game>> GetFavoriteGamesAsync(string userId)
         {
             return await _context.Favorites
                 .Where(f => f.UserId == userId)
                 .Select(f => f.Game).ToListAsync();
         }
 
-        public async Task AddToFavoritesAsync(int userId, int gameId)
+        public async Task AddToFavoritesAsync(string userId, int gameId)
         {
             var favorite = new Favorite { UserId = userId, GameId = gameId };
             _context.Favorites.Add(favorite);
             await _context.SaveChangesAsync();
         }
 
-        public async Task RemoveFromFavoritesAsync(int userId, int gameId)
+        public async Task RemoveFromFavoritesAsync(string userId, int gameId)
         {
             var favorite = await _context.Favorites
                 .FirstOrDefaultAsync(f => f.UserId == userId && f.GameId == gameId);

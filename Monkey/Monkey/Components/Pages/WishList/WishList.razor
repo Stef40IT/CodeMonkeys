@@ -2,6 +2,8 @@
 @using Monkey.Core.Services.FavoriteServices
 @using Monkey.Data.Data.Entities
 @inject IFavoriteService FavoriteService
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@using System.Security.Claims
 @inject NavigationManager NavigationManager
 
 <h3>Моите любими игри</h3>
@@ -32,19 +34,30 @@ else
 }
 
 @code {
+    private string UserId { get; set; }
     private List<Game> games;
-
-    [Parameter]
-    public int UserId { get; set; } // Ид на текущия потребител
 
     protected override async Task OnInitializedAsync()
     {
+        UserId = await GetUserId();
         games = await FavoriteService.GetFavoriteGamesAsync(UserId);
+    }
+
+    private async Task<string> GetUserId()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        return user.Identity.IsAuthenticated ? user.FindFirstValue(ClaimTypes.NameIdentifier) : null;
     }
 
     private async Task RemoveFromFavorites(int gameId)
     {
-        await FavoriteService.RemoveFromFavoritesAsync(UserId, gameId);
-        games = await FavoriteService.GetFavoriteGamesAsync(UserId);
+        var userId = await GetUserId();
+        if (!string.IsNullOrEmpty(userId))
+        {
+            await FavoriteService.RemoveFromFavoritesAsync(userId, gameId);
+            games = await FavoriteService.GetFavoriteGamesAsync(userId);
+        }
     }
 }
