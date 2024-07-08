@@ -1,4 +1,5 @@
-﻿using Monkey.Data;
+﻿using Monkey.Core.Services.GameServices;
+using Monkey.Data;
 using Monkey.Data.Data.Entities;
 using Monkey.Data.Data.Repositories;
 using System;
@@ -13,15 +14,16 @@ namespace Monkey.Core.Services.ReservatioService
     public class ReservationService : IReservationService
     {
         private readonly ApplicationDbContext _dbContext;
-        public ReservationService(ApplicationDbContext reservationRepository)
+        public ReservationService(ApplicationDbContext dbContext)
             : base()
         {
-            _dbContext = reservationRepository;
+            _dbContext = dbContext;
         }
 
         public void Create(Reservation entity)
         {
-            _dbContext.Reservations.Add(entity);
+                _dbContext.Reservations.Add(entity);
+                _dbContext.SaveChanges(); 
         }
     }
 }

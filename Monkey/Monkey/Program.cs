@@ -8,6 +8,7 @@ using Monkey.Data;
 using Monkey.Data.Data.Entities;
 using Monkey.Data.Data.Repositories;
 using Monkey.Core.Services.ReservatioService;
+using Monkey.Core.Services.UserService;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,6 +23,7 @@ builder.Services.AddScoped<IdentityRedirectManager>();
 builder.Services.AddScoped<AuthenticationStateProvider, IdentityRevalidatingAuthenticationStateProvider>();
 builder.Services.AddScoped<IGameService,GameService>();
 builder.Services.AddScoped<IReservationService,ReservationService>();
+builder.Services.AddScoped<IUserService,UserService>();
 
 
 builder.Services.AddAuthentication(options =>

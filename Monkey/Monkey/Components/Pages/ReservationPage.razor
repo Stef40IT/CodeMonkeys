@@ -7,8 +7,11 @@
 @using Monkey.Core.Services.ReservatioService;
 @using Monkey.Data.Data.Repositories
 @using Monkey.Core.Projections;
+@using Monkey.Core.Services.UserService
 @inject IGameService gameService
 @inject IReservationService reservService
+@inject IUserService userService
+@inject NavigationManager NavManager
 
 
 <PageTitle>Reserve</PageTitle>
@@ -16,7 +19,7 @@
 
 <div>
     <label>Textbox 1:</label>
-    <input type="text" @bind="game" />
+    <input type="text" @bind="gameName" />
 </div>
 <div>
     <label>Textbox 2:</label>
@@ -29,34 +32,34 @@
 <div>
     <button @onclick="Add">reserve</button>
 </div>
-<div>
-    <button @onclick="show">show</button>
-</div>
 
 @code {
-    private string game;
+    private string gameName;
     private string bookDate;
     private string returnDate;
-    Reservation reserv;
+    Reservation reserv = new Reservation();
+    Game game = new Game();
 
-    public void Add()
+    private async void Add()
     {
-        reserv.Game = gameService.GetByName(game).Result;
-        reserv.BookDate = DateTime.Parse(bookDate);
-        reserv.ReturnDate = DateTime.Parse(returnDate);
-        reserv.User = new User
+        await Task.Delay(100);
+        game = await gameService.GetByName(gameName);
+        
+
+        if (game.isBooked)
         {
-            Id = 1,
-            Name = "hris",
-            Email = "hris",
-            Password = "hris",
-            IsAdmin = true,
-        };
-        reservService.Create(reserv);
-    }
-
-    public void show()
-    {
+            // reserv.Game = game;
+            // reserv.BookDate = DateTime.Parse(bookDate);
+            // reserv.ReturnDate = DateTime.Parse(returnDate);
+            // reserv.User = await userService.GetById(1);
+            // reservService.Create(reserv);
+            gameService.UpdateCountDown(game.Id);
+            NavManager.NavigateTo("/catalog");
+        }
+        else
+        {
+            throw new Exception("Играта не е в наличност");
+        }
         
     }
 }

@@ -27,10 +27,10 @@
 
 @inject IGameService gameService;
 @code {
-    List<GameGeneralInfoProjection> GameList = new List<GameGeneralInfoProjection>();
+    List<Game> GameList = new List<Game>();
 
-    // protected override async Task OnInitializedAsync() =>
-    //     GameList = (await gameService.GetAllGames()).ToList();
+    protected override async Task OnInitializedAsync() =>
+        GameList = gameService.GetAll();
 }
 
 <style>
