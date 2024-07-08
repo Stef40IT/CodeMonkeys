@@ -34,7 +34,7 @@ namespace Monkey.Core.Services.GameServices
             return _context.Games.ToList();
         }
 
-        public void UpdateCountDown(int id)
+        public async void UpdateCountDown(int id)
         {
             var entity = _context.Games.SingleOrDefault(g => g.Id == id);
             if (entity != null)
@@ -44,7 +44,7 @@ namespace Monkey.Core.Services.GameServices
                 {
                     entity.isBooked = false;
                 }
-                _context.SaveChanges();
+                await _context.SaveChangesAsync();
             }
         }
         public void UpdateCountUp(int id)

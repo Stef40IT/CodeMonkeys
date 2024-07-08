@@ -20,10 +20,10 @@ namespace Monkey.Core.Services.ReservatioService
             _dbContext = dbContext;
         }
 
-        public void Create(Reservation entity)
+        public async void Create(Reservation entity)
         {
                 _dbContext.Reservations.Add(entity);
-                _dbContext.SaveChanges(); 
+                await _dbContext.SaveChangesAsync(); 
         }
     }
 }

@@ -23,11 +23,11 @@
 </div>
 <div>
     <label>Textbox 2:</label>
-    <input type="text" @bind="bookDate" />
+    <input type="date" @bind-value="bookDate" />
 </div>
 <div>
     <label>Textbox 3:</label>
-    <input type="text" @bind="returnDate" />
+    <input type="date" @bind-value="returnDate" />
 </div>
 <div>
     <button @onclick="Add">reserve</button>
@@ -35,31 +35,44 @@
 
 @code {
     private string gameName;
-    private string bookDate;
-    private string returnDate;
-    Reservation reserv = new Reservation();
-    Game game = new Game();
+    private DateTime bookDate = DateTime.Today;
+    private DateTime returnDate = DateTime.Today;
+    Reservation reserv;
+    Game game;
+    User user;
+
+    protected override void OnInitialized()
+    {
+        game = new Game();
+        reserv = new Reservation();
+        user = new User();
+    }
 
     private async void Add()
     {
-        await Task.Delay(100);
+        await Task.Delay(500);
         game = await gameService.GetByName(gameName);
-        
+        user = await userService.GetById(1);
 
-        if (game.isBooked)
+        if (!game.isBooked)
         {
-            // reserv.Game = game;
-            // reserv.BookDate = DateTime.Parse(bookDate);
-            // reserv.ReturnDate = DateTime.Parse(returnDate);
-            // reserv.User = await userService.GetById(1);
-            // reservService.Create(reserv);
+            reserv.Game = game;
+            reserv.BookDate = bookDate;
+            reserv.ReturnDate = returnDate;
+            reserv.BookDate = bookDate;
+            reserv.User = user;
+            reservService.Create(reserv);
             gameService.UpdateCountDown(game.Id);
-            NavManager.NavigateTo("/catalog");
+            
         }
         else
         {
             throw new Exception("Играта не е в наличност");
         }
-        
+
+        game = new Game();
+        reserv = new Reservation();
+        user = new User();
+        NavManager.NavigateTo("/catalog");
     }
 }
