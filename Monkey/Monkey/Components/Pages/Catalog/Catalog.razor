@@ -107,6 +107,6 @@
     [Inject]
     private IGameService gameService { get; set; }
 
-    private void OpenGameDetails(int gameId) => NavManager.NavigateTo("/game");
+    private void OpenGameDetails(int gameId) => NavManager.NavigateTo($"/game/{gameId}");
     private double AverageRating(ICollection<Rating> ratings) => ratings.Average(r => r.Rate);
 }
