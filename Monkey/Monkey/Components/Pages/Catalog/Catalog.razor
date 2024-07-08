@@ -1,63 +1,112 @@
 ﻿@page "/catalog"
 @rendermode InteractiveServer
 @using Monkey.Core.Projections.Games
-@using Monkey.Data.Data.Entities;
-@using System.Collections.Generic;
-@using Monkey.Core.Services.GameServices;
-@using Monkey.Core.Projections;
+@using Monkey.Data.Data.Entities
+@using Monkey.Core.Services.GameServices
+@using Monkey.Core.Projections
+@using Monkey.Web.ViewModels.Catalog
+@inject NavigationManager NavManager
 
 <PageTitle>Каталог</PageTitle>
 
-<h1>Каталог</h1>
-
- <div class="game-container">
-    @foreach (var game in GameList)
-    {
-        <div class="game">
-            <tr>
-                <td>
-                    <div class="game-name">@game.Name</div>
-                </td>
-
-            </tr>
-        </div>
-    }
+<h1 class="catalog-title">Каталог</h1>
+<div class="title-underline"></div>
+<div>
+    <label for="sort">Сортирай по: </label>
+    <select id="sort" @bind="SelectedCriteria">
+        <option value="">Избери критерия</option>
+        <option value="Name">Име(А-Я)</option>
+        <option value="Name(Descending)">Име(Я-А)</option>
+        <option value="Difficulty">Сложност(1-4)</option>
+        <option value="DifficultyDescending">Сложност(4-1)</option>
+        <option value="Rating">Оценка</option>
+        <option value="Count">Налични</option>
+        
+    </select>
+</div>
+<div class="game-container">
+    <div class="game-grid">
+        @if (GameList == null || !GameList.Any())
+        {
+            <p>Loading games...</p>
+        }
+        else
+        {
+            @foreach (var gameRow in sortedGames.Chunk(4))
+            {
+                <div class="game-row">
+                    @foreach (var game in gameRow)
+                    {
+                        <div class="game-card" @onclick="() => OpenGameDetails(game.Id)">
+                            <img src="@game.Picture" alt="@game.Name" class="game-image" />
+                            <div class="game-info">
+                                <div class="game-name">@game.Name</div>
+                                <div class="game-count">Available: @game.Count</div>
+                                <div class="game-difficulty">Difficulty: @game.Difficulty</div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+        }
+    </div>
 </div>
 
-
-@inject IGameService gameService;
 @code {
-    List<GameGeneralInfoProjection> GameList = new List<GameGeneralInfoProjection>();
+    private List<GameGeneralInfoProjection> GameList;
+    private List<GameGeneralInfoProjection> sortedGames;
+    private string selectedCriteria;
+    protected override async Task OnInitializedAsync()
+    {
+        GameList = (await gameService.GetAllGames()).Take(20).ToList();
+        sortedGames = GameList;
+    }
+    private string SelectedCriteria
+    {
+        get => selectedCriteria;
+        set
+        {
+            selectedCriteria = value;
+            OnCriteriaChanged();
+        }
+    }
+    private void OnCriteriaChanged()
+    {
+        if (string.IsNullOrEmpty(selectedCriteria))
+        {
+            sortedGames = GameList;
+            return;
+        }
 
-    protected override async Task OnInitializedAsync() =>
-        GameList = (await gameService.GetAllGames()).ToList();
+        switch (selectedCriteria)
+        {
+            case "Difficulty":
+                sortedGames = GameList.OrderBy(g => g.Difficulty).ToList();
+                break;
+            case "DifficultyDescending":
+                sortedGames = GameList.OrderByDescending(g => g.Difficulty).ToList();
+                break;
+            case "Name":
+                sortedGames = GameList.OrderBy(g => g.Name).ToList();
+                break;
+            case "Name(Descending)":
+                sortedGames = GameList.OrderByDescending(g => g.Name).ToList();
+                break;
+            case "Rating":
+                sortedGames = GameList.OrderBy(g => AverageRating(g.Raitings)).ToList();
+                break;
+            case "Count":
+                sortedGames = GameList.OrderByDescending(g => g.Count).ToList();
+                break;
+
+            default:
+                sortedGames = GameList;
+                break;
+        }
+    }
+    [Inject]
+    private IGameService gameService { get; set; }
+
+    private void OpenGameDetails(int gameId) => NavManager.NavigateTo("/game");
+    private double AverageRating(ICollection<Rating> ratings) => ratings.Average(r => r.Rate);
 }
-
-<style>
-    .item-container {
-        display: flex;
-        justify-content: space-around;
-        flex-wrap: wrap;
-    }
-
-    .item {
-        margin: 10px;
-        text-align: center;
-    }
-
-    .image-button {
-        border: none;
-        background: none;
-        padding: 0;
-    }
-
-    .item-image {
-        width: 100px;
-        height: 150px;
-        object-fit: cover;
-    }
-
-    .item-name {
-        margin-top: 5px;
-    }
-</style>
