@@ -12,14 +12,16 @@
 <h1 class="catalog-title">Каталог</h1>
 <div class="title-underline"></div>
 <div>
-    <label for="sort">Sort by: </label>
+    <label for="sort">Сортирай по: </label>
     <select id="sort" @bind="SelectedCriteria">
-        <option value="">Select Sorting Criteria</option>
-        <option value="Name">Name(^)</option>
-        <option value="Name(Descending)">Name(_)</option>
-        <option value="Difficulty">Difficulty</option>
-        @*<option value="Rating">Rating</option>
-        <option value="NumberOfPlayers">Number of Players</option>*@
+        <option value="">Избери критерия</option>
+        <option value="Name">Име(А-Я)</option>
+        <option value="Name(Descending)">Име(Я-А)</option>
+        <option value="Difficulty">Сложност(1-4)</option>
+        <option value="DifficultyDescending">Сложност(4-1)</option>
+        <option value="Rating">Оценка</option>
+        <option value="Count">Налични</option>
+        
     </select>
 </div>
 <div class="game-container">
@@ -81,11 +83,20 @@
             case "Difficulty":
                 sortedGames = GameList.OrderBy(g => g.Difficulty).ToList();
                 break;
+            case "DifficultyDescending":
+                sortedGames = GameList.OrderByDescending(g => g.Difficulty).ToList();
+                break;
             case "Name":
                 sortedGames = GameList.OrderBy(g => g.Name).ToList();
                 break;
             case "Name(Descending)":
                 sortedGames = GameList.OrderByDescending(g => g.Name).ToList();
+                break;
+            case "Rating":
+                sortedGames = GameList.OrderBy(g => AverageRating(g.Raitings)).ToList();
+                break;
+            case "Count":
+                sortedGames = GameList.OrderByDescending(g => g.Count).ToList();
                 break;
 
             default:
@@ -97,4 +108,5 @@
     private IGameService gameService { get; set; }
 
     private void OpenGameDetails(int gameId) => NavManager.NavigateTo("/game");
+    private double AverageRating(ICollection<Rating> ratings) => ratings.Average(r => r.Rate);
 }
