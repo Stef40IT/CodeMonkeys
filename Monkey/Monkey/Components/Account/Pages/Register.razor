@@ -25,7 +25,7 @@
         <StatusMessage Message="@Message" />
         <EditForm Model="Input" asp-route-returnUrl="@ReturnUrl" method="post" OnValidSubmit="RegisterUser" FormName="register">
             <DataAnnotationsValidator />
-            <h2>Създай нов акаунт</h2>
+            <h2><b>СЪЗДАЙ НОВ АКАУНТ!</b></h2>
             <hr />
             <ValidationSummary class="text-danger" role="alert" />
             <div class="form-floating mb-3">
@@ -43,10 +43,12 @@
                 <label for="confirm-password">Повтори паролата</label>
                 <ValidationMessage For="() => Input.ConfirmPassword" class="text-danger" />
             </div>
-            <button type="submit" class="w-100 btn btn-lg btn-primary">РЕГИСТРИРАЙ СЕ!</button>
+            <button type="submit" class="w-100 btn btn-lg btn-primary">Регистрирайте се</button>
         </EditForm>
     </div>
-    
+            <div class="col-md-6 image-container">
+                <img src="https://th.bing.com/th/id/R.a8d7066cdaf2143c2333adc4045c5dd2?rik=N7tZm5hAwwN5Kw&pid=ImgRaw&r=0" alt="Alternate Text" class="login-image" />
+            </div>
 </div>
     </div>
 
