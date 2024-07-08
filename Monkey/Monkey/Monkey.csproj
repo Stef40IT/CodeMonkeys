@@ -35,6 +35,14 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Include="Components\Pages\GamePage.razor" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="wwwroot\uploadedImages\" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Folder Include="Components\Pages\NewFolder\" />
   </ItemGroup>
 
