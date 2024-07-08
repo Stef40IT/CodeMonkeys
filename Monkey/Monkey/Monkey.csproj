@@ -6,15 +6,13 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <UserSecretsId>aspnet-Monkey-75d95645-bb0a-4f04-a895-74ca83ceb4ff</UserSecretsId>
   </PropertyGroup>
-
   <ItemGroup>
+    <PackageReference Include="MailKit" Version="4.7.0" />
     <None Remove="Components\Pages\Catalog\Catalog.razor.css" />
   </ItemGroup>
-
   <ItemGroup>
     <Content Include="Components\Pages\Catalog\Catalog.razor.css" />
   </ItemGroup>
-
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="8.0.6" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.6" />
@@ -25,6 +23,7 @@
     </PackageReference>
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.6" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.6" />
+    <PackageReference Include="MimeKit" Version="4.7.0" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.2" />
   </ItemGroup>
 
