@@ -9,21 +9,25 @@
 
 <PageTitle>Каталог</PageTitle>
 
-<h1 class="catalog-title">Каталог</h1>
-<div class="title-underline"></div>
-<div>
-    <label for="sort">Сортирай по: </label>
-    <select id="sort" @bind="SelectedCriteria">
-        <option value="">Избери критерия</option>
-        <option value="Name">Име(А-Я)</option>
-        <option value="Name(Descending)">Име(Я-А)</option>
-        <option value="Difficulty">Сложност(1-4)</option>
-        <option value="DifficultyDescending">Сложност(4-1)</option>
-        <option value="Rating">Оценка</option>
-        <option value="Count">Налични</option>
-        
-    </select>
+<div class="catalog-header">
+    <div>
+        <h1 class="catalog-title">Каталог</h1>
+        <div class="title-underline"></div>
+    </div>
+    <div class="filter-container">
+        <label for="sort">Сортирай по: </label>
+        <select id="sort" @bind="SelectedCriteria">
+            <option value="">Избери критерия</option>
+            <option value="Name">Име(А-Я)</option>
+            <option value="Name(Descending)">Име(Я-А)</option>
+            <option value="Difficulty">Сложност(1-4)</option>
+            <option value="DifficultyDescending">Сложност(4-1)</option>
+            <option value="Rating">Оценка</option>
+            <option value="Count">Налични</option>
+        </select>
+    </div>
 </div>
+
 <div class="game-container">
     <div class="game-grid">
         @if (GameList == null || !GameList.Any())
@@ -56,11 +60,13 @@
     private List<GameGeneralInfoProjection> GameList;
     private List<GameGeneralInfoProjection> sortedGames;
     private string selectedCriteria;
+
     protected override async Task OnInitializedAsync()
     {
         GameList = (await gameService.GetAllGames()).Take(20).ToList();
         sortedGames = GameList;
     }
+
     private string SelectedCriteria
     {
         get => selectedCriteria;
@@ -70,6 +76,7 @@
             OnCriteriaChanged();
         }
     }
+
     private void OnCriteriaChanged()
     {
         if (string.IsNullOrEmpty(selectedCriteria))
@@ -98,15 +105,16 @@
             case "Count":
                 sortedGames = GameList.OrderByDescending(g => g.Count).ToList();
                 break;
-
             default:
                 sortedGames = GameList;
                 break;
         }
     }
+
+    private double AverageRating(ICollection<Rating> ratings) => ratings.Average(r => r.Rate);
+
     [Inject]
     private IGameService gameService { get; set; }
 
     private void OpenGameDetails(int gameId) => NavManager.NavigateTo("/game");
-    private double AverageRating(ICollection<Rating> ratings) => ratings.Average(r => r.Rate);
 }
