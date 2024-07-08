@@ -18,7 +18,7 @@
 }
 
 .title-underline {
-    width: 120%; 
+    width: 140%; 
     height: 6px; 
     background-color: orange;
     border-radius: 2px;
@@ -40,7 +40,7 @@
 
 #sort {
     padding: 8px 15px;
-    font-size: 16px;
+    font-size: 20px;
     border-radius: 8px;
     border: 1px solid #ccc;
     background-color: white;
