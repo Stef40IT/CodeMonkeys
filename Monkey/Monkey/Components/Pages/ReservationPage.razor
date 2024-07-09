@@ -1,0 +1,88 @@
+﻿@page "/Reservation"
+@rendermode InteractiveServer
+@using Microsoft.AspNetCore.Identity
+@using Monkey.Core.Projections.Games
+@using Monkey.Data.Data.Entities;
+@using System.Collections.Generic;
+@using Monkey.Core.Services.GameServices;
+@using Monkey.Core.Services.ReservatioService;
+@using Monkey.Data.Data.Repositories
+@using Monkey.Core.Projections;
+@using Monkey.Core.Services.UserService
+@inject IGameService gameService
+@inject IReservationService reservService
+@inject IUserService userService
+@inject NavigationManager NavManager
+@inject AuthenticationStateProvider authStateProvider
+@inject UserManager<ApplicationUser> UserManager
+
+
+<PageTitle>Reserve</PageTitle>
+
+
+<div>
+    <label>Textbox 1:</label>
+    <input type="text" @bind="gameName" />
+</div>
+<div>
+    <label>Textbox 2:</label>
+    <input type="date" @bind-value="bookDate" />
+</div>
+<div>
+    <label>Textbox 3:</label>
+    <input type="date" @bind-value="returnDate" />
+</div>
+<div>
+    <button @onclick="Add">reserve</button>
+</div>
+
+@code {
+    private string gameName;
+    private DateTime bookDate = DateTime.Today;
+    private DateTime returnDate = DateTime.Today;
+    Reservation reserv;
+    Game game;
+    ApplicationUser user;
+
+    protected override async void OnInitialized()
+    {
+        game = new Game();
+        reserv = new Reservation();
+        var authState = await authStateProvider.GetAuthenticationStateAsync();
+        var userPrincipal = authState.User;
+
+        if (userPrincipal.Identity.IsAuthenticated)
+        {
+            user = await UserManager.GetUserAsync(userPrincipal);
+        }
+    }
+
+    private async void Add()
+    {
+        await Task.Delay(500);
+        game = await gameService.GetByName(gameName);
+        user = await userService.GetById("");
+
+
+        if (!game.isBooked)
+        {
+            reserv.Game = game;
+            reserv.BookDate = bookDate;
+            reserv.ReturnDate = returnDate;
+            reserv.BookDate = bookDate;
+            reserv.User = user;
+            reservService.Create(reserv);
+            gameService.UpdateCountDown(game.Id);
+            
+        }
+        else
+        {
+            throw new Exception("Играта не е в наличност");
+        }
+
+        game = new Game();
+        reserv = new Reservation();
+        user = new ApplicationUser();
+        NavManager.NavigateTo("/catalog");
+    }
+}

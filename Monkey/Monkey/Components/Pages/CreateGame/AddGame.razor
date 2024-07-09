@@ -1,7 +1,8 @@
 ﻿@page "/game/create"
 @using Monkey.Core.Services.GameServices;
-@using Monkey.Data;
 @using Monkey.Web.ViewModels.Game
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject NavigationManager NavigationManager
 @inject IGameService gameService;
 @rendermode InteractiveServer
 <h3>AddGame</h3>
@@ -63,6 +64,18 @@
     public GameViewModel Game { get; set; } = new GameViewModel();
 
     public string Message { get; set; } = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        var isAdmin = user.IsInRole("Admin");
+
+        if (!isAdmin)
+        {
+            NavigationManager.NavigateTo("/");
+        }
+    }
 
     public async void CreateGame()
     {
