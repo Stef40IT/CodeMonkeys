@@ -2,7 +2,9 @@
 @using Monkey.Core.Services.GameServices
 @using Monkey.Data;
 @using Monkey.Data.Data.Entities;
+@rendermode InteractiveServer
 @inject IGameService gameService;
+@inject NavigationManager NavManager
 
 <h3>Game</h3>
 
@@ -45,6 +47,8 @@
             }
         </table>
     }
+    <button @onclick="() => Reservate(Id)">Reserve</button>
+
 }
 
 @code {
@@ -60,5 +64,9 @@
             game = gameService.GetById(Id);
             // Rating = game.Raitings.Average()
         }
+    }
+    public void Reservate(int Id)
+    {
+        NavManager.NavigateTo($"/Reservation/{Id}");
     }
 }
