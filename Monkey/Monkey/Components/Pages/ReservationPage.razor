@@ -21,23 +21,48 @@
 <PageTitle>Reserve</PageTitle>
 
 
-<div>
-    <label>Textbox 1:</label>
-    <input type="text" @bind="gameName" />
-</div>
-<div>
-    <label>Textbox 2:</label>
-    <input type="datetime" @bind-value="bookDate" />
-</div>
-<div>
-    <label>Textbox 3:</label>
-    <input type="datetime" @bind-value="returnDate" />
-</div>
-<div>
-    <NavLink class="nav-link" href="catalog">
-        <button @onclick="Add">reserve</button>
-    </NavLink>
-</div>
+ <div class="game-container">
+        <div class="game-header">
+            <div class="game-title">@game.Name</div>
+            <div class="game-info">Сложност: @game.Difficulty | Оставащи: @game.Count</div>
+        </div>
+        <div class="game-image-container">
+            <img src="@game.Picture" class="game-image" />
+            <div class="action-buttons">
+                <button class="action-button"><b>Върни</b></button>
+            </div>
+        </div>
+        <div class="game-details-container">
+            <div class="game-details">
+                <b>  <p>@game.Description</p></b>
+        </div>
+            </div>
+            </div>
+            <div class="forma">
+                <form>
+                    <div class="form-field">
+                        <label for="name">Въведи име:</label>
+                        <input type="text" id="name" name="name" required>
+                    </div>
+                    <div class="form-field">
+                        <label for="start-date">Дата от:</label>
+                        <input type="date" id="start-date" name="start-date" required>
+                    </div>
+                    <div class="form-field">
+                        <label for="start-time">Час от:</label>
+                        <input type="text" id="start-time" name="start-time" required pattern="[0-9]{1,2}:[0-9]{2}">
+                    </div>
+                    <div class="form-field">
+                        <label for="end-date">Дата до:</label>
+                        <input type="date" id="end-date" name="end-date" required>
+                    </div>
+                    <div class="form-field">
+                        <label for="end-time">Час до:</label>
+                        <input type="text" id="end-time" name="end-time" required pattern="[0-9]{1,2}:[0-9]{2}">
+                    </div>
+                    <button type="submit" @onclick="Add"><b>Запази игра</b></button>
+                </form>
+            </div>
 
 @code {
     [Parameter]
