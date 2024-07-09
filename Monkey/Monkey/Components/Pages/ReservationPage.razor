@@ -61,7 +61,6 @@
     {
         await Task.Delay(500);
         game = await gameService.GetByName(gameName);
-        user = await userService.GetById("");
 
 
         if (!game.isBooked)

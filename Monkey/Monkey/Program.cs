@@ -5,6 +5,8 @@ using Monkey.Components;
 using Monkey.Components.Account;
 using Monkey.Core.Services.EmailServices;
 using Monkey.Core.Services.GameServices;
+using Monkey.Core.Services.ReservatioService;
+using Monkey.Core.Services.UserService;
 using Monkey.Data;
 using Monkey.Data.Data.Entities;
 using Monkey.Data.Data.Repositories;
@@ -29,11 +31,12 @@ builder.Services.Configure<IdentityOptions>(options =>
 builder.Services.AddScoped<IdentityUserAccessor>();
 builder.Services.AddScoped<IdentityRedirectManager>();
 builder.Services.AddScoped<AuthenticationStateProvider, IdentityRevalidatingAuthenticationStateProvider>();
-builder.Services.AddScoped<IRepository<Game>,Repository<Game>>();
+builder.Services.AddScoped<IReservationService, ReservationService>();
 builder.Services.AddScoped<IGameService,GameService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<IRepository<Game>, Repository<Game>>();
 builder.Services.AddScoped<IGameService, GameService>();
+builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultScheme = IdentityConstants.ApplicationScheme;
@@ -105,12 +108,12 @@ using (var scope = app.Services.CreateScope())
 
     //if (await userManager.FindByEmailAsync(email) == null)
     //{
-        var user = new ApplicationUser();
-        user.UserName = email;
-        user.Email = email;
+    //    var user = new ApplicationUser();
+    //    user.UserName = email;
+    //    user.Email = email;
 
-        await userManager.CreateAsync(user, password);
-        await userManager.AddToRoleAsync(user, "Admin");
+    //    await userManager.CreateAsync(user, password);
+    //    await userManager.AddToRoleAsync(user, "Admin");
     //}
 }
 
