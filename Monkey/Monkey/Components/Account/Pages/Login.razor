@@ -42,9 +42,9 @@
                             </label>
                         </div>
                         <div>
-                            <NavLink href="home">
+                            
                                 <button class="w-100 btn btn-lg btn-primary">Влезте</button>
-                            </NavLink>
+                            
                         </div>
                         <div>
                             <p>
@@ -92,9 +92,12 @@
         var result = await SignInManager.PasswordSignInAsync(Input.Email, Input.Password, Input.RememberMe, lockoutOnFailure: false);
         if (result.Succeeded)
         {
+            NavigationManager.NavigateTo("/home");
             Logger.LogInformation("Потребителят успешно влезна в акаунта си.");
             RedirectManager.RedirectTo(ReturnUrl);
+
         }
+
         else if (result.RequiresTwoFactor)
         {
             RedirectManager.RedirectTo(
@@ -110,6 +113,7 @@
         {
             errorMessage = "Error: Invalid login attempt.";
         }
+
     }
 
     private sealed class InputModel
