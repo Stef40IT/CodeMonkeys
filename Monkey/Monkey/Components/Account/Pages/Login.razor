@@ -9,7 +9,6 @@
 @inject SignInManager<ApplicationUser> SignInManager
 @inject ILogger<Login> Logger
 @inject NavigationManager NavigationManager
-@inject IdentityRedirectManager RedirectManager
 @inject NavigationManager NavManager
 
 <PageTitle>Log in</PageTitle>
@@ -42,9 +41,7 @@
                             </label>
                         </div>
                         <div>
-                            <NavLink href="home">
-                                <button class="w-100 btn btn-lg btn-primary">Влезте</button>
-                            </NavLink>
+                            <button class="w-100 btn btn-lg btn-primary">Влезте</button>
                         </div>
                         <div>
                             <p>
@@ -93,18 +90,17 @@
         if (result.Succeeded)
         {
             Logger.LogInformation("Потребителят успешно влезна в акаунта си.");
-            RedirectManager.RedirectTo(ReturnUrl);
+            NavigationManager.NavigateTo(ReturnUrl ?? "/catalog");
         }
         else if (result.RequiresTwoFactor)
         {
-            RedirectManager.RedirectTo(
-                "Account/LoginWith2fa",
-                new() { ["returnUrl"] = ReturnUrl, ["rememberMe"] = Input.RememberMe });
+            NavigationManager.NavigateTo(
+                $"Account/LoginWith2fa?returnUrl={ReturnUrl}&rememberMe={Input.RememberMe}");
         }
         else if (result.IsLockedOut)
         {
             Logger.LogWarning("User account locked out.");
-            RedirectManager.RedirectTo("Account/Lockout");
+            NavigationManager.NavigateTo("Account/Lockout");
         }
         else
         {
@@ -125,6 +121,4 @@
         [Display(Name = "Запомни ме!")]
         public bool RememberMe { get; set; }
     }
-    
 }
-
