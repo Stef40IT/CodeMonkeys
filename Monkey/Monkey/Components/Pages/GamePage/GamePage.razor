@@ -2,71 +2,87 @@
 @using Monkey.Core.Services.GameServices
 @using Monkey.Data;
 @using Monkey.Data.Data.Entities;
-@rendermode InteractiveServer
 @inject IGameService gameService;
-@inject NavigationManager NavManager
 
-<h3>Game</h3>
+<h3>Игра</h3>
 
 @if (game != null)
 {
-    <table>
-        <thead>
-        <th>Id</th>
-        <th>Name</th>
-        <th>Difficulty</th>
-        <th>Count</th>
-        <th>Description</th>
-        <th>Booked</th>
-        </thead>
-        <tbody>
-        <td>@Id</td>
-        <td>@game.Name</td>
-        <td>@game.Difficulty</td>
-        <td>@game.Count</td>
-        <td>@game.Description</td>
-        <td>@game.isBooked</td>
-        <img src="@game.Picture" width="200px" height="200px" />
-
-        </tbody>
-
-    </table>
-
-
-    @if (game.Comments != null)
-    {
-        <table>
-            <thead>
-            <td>Text</td>
-            <td>Hour</td>
-            </thead>
-            @foreach (var commnet in game?.Comments)
+    <div class="game-container">
+        <div class="game-header">
+            <div class="game-title">@game.Name</div>
+            <div class="game-info">Сложност: @game.Difficulty | Оставащи: @game.Count</div>
+        </div>
+        <div class="game-image-container">
+            <img src="@game.Picture" class="game-image" />
+            <div class="action-buttons">
+                <button class="action-button"><b>Върни</b></button>
+            </div>
+        </div>
+        <div class="game-details-container">
+            <div class="game-details">
+                <b>  <p>@game.Description</p></b>
+            </div>
+            <div class="forma">
+                <form>
+                    <div class="form-field">
+                        <label for="name">Въведи име:</label>
+                        <input type="text" id="name" name="name" required>
+                    </div>
+                    <div class="form-field">
+                        <label for="start-date">Дата от:</label>
+                        <input type="date" id="start-date" name="start-date" required>
+                    </div>
+                    <div class="form-field">
+                        <label for="start-time">Час от:</label>
+                        <input type="text" id="start-time" name="start-time" required pattern="[0-9]{1,2}:[0-9]{2}">
+                    </div>
+                    <div class="form-field">
+                        <label for="end-date">Дата до:</label>
+                        <input type="date" id="end-date" name="end-date" required>
+                    </div>
+                    <div class="form-field">
+                        <label for="end-time">Час до:</label>
+                        <input type="text" id="end-time" name="end-time" required pattern="[0-9]{1,2}:[0-9]{2}">
+                    </div>
+                    <button type="submit"><b>Запази игра</b></button>
+                </form>
+            </div>
+            @if (game.Comments != null)
             {
-                <td>@commnet.Text</td>
-                <td>@commnet.Hour</td>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Текст</th>
+                            <th>Час</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var comment in game.Comments)
+                        {
+                            <tr>
+                                <td>@comment.Text</td>
+                                <td>@comment.Hour</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
             }
-        </table>
-    }
-    <button @onclick="() => Reservate(Id)">Reserve</button>
-
+        </div>
+    </div>
 }
 
 @code {
     Game game;
+
     [Parameter]
     public int Id { get; set; }
-    public double Rating { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
         if (game == null)
         {
             game = gameService.GetById(Id);
-            // Rating = game.Raitings.Average()
         }
-    }
-    public void Reservate(int Id)
-    {
-        NavManager.NavigateTo($"/Reservation/{Id}");
     }
 }
