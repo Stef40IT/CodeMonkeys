@@ -3,6 +3,9 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Monkey.Components;
 using Monkey.Components.Account;
+using Monkey.Core.Services;
+using Monkey.Core.Services.FavoriteServices;
+using Monkey.Core.Services.EmailServices;
 using Monkey.Core.Services.GameServices;
 using Monkey.Core.Services.ReservatioService;
 using Monkey.Core.Services.UserService;
@@ -30,10 +33,15 @@ builder.Services.Configure<IdentityOptions>(options =>
 builder.Services.AddScoped<IdentityUserAccessor>();
 builder.Services.AddScoped<IdentityRedirectManager>();
 builder.Services.AddScoped<AuthenticationStateProvider, IdentityRevalidatingAuthenticationStateProvider>();
+
+builder.Services.AddScoped<IFavoriteService, FavoriteService>();
 builder.Services.AddScoped<IRepository<Game>, Repository<Game>>();
 builder.Services.AddScoped<IGameService, GameService>();
 builder.Services.AddScoped<IReservationService, ReservationService>();
 builder.Services.AddScoped<IUserService, UserService>();
+
+
+builder.Services.AddScoped<IEmailService, EmailService>();
 
 
 builder.Services.AddAuthentication(options =>
@@ -55,6 +63,7 @@ builder.Services.AddIdentityCore<ApplicationUser>(options => options.SignIn.Requ
     .AddDefaultTokenProviders();
 
 builder.Services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSender>();
+
 
 var app = builder.Build();
 
@@ -104,15 +113,20 @@ using (var scope = app.Services.CreateScope())
     string email = "admin@admin.com";
     string password = "Admin123+";
 
-    //if (await userManager.FindByEmailAsync(email) == null)
-    //{
-        var user = new ApplicationUser();
-        user.UserName = email;
-        user.Email = email;
+    if (await userManager.FindByEmailAsync(email) == null)
+    {
+        var user = new ApplicationUser
+        {
+            UserName = email,
+            Email = email
+        };
 
-        await userManager.CreateAsync(user, password);
-        await userManager.AddToRoleAsync(user, "Admin");
-    //}
+        var result = await userManager.CreateAsync(user, password);
+        if (result.Succeeded)
+        {
+            await userManager.AddToRoleAsync(user, "Admin");
+        }
+    }
 }
 
 app.Run();

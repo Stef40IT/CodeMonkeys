@@ -1,12 +1,7 @@
 ﻿@page "/game/create"
-@using Microsoft.AspNetCore.Identity
 @using Monkey.Core.Services.GameServices;
-@using Monkey.Data;
-@using Monkey.Data.Data.Entities
 @using Monkey.Web.ViewModels.Game
 @inject AuthenticationStateProvider AuthenticationStateProvider
-@inject UserManager<ApplicationUser> userManager
-@inject SignInManager<ApplicationUser> signInManager
 @inject NavigationManager NavigationManager
 @inject IGameService gameService;
 @rendermode InteractiveServer

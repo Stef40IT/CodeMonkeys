@@ -8,11 +8,15 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Components\Pages\Catalog\Catalog.razor.css" />
+    <None Remove="Components\Account\Pages\Login.razor.css" />
+    <None Remove="Components\Account\Pages\Register.razor.css" />
+    <None Remove="Components\Pages\Home.razor.css" />
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="Components\Pages\Catalog\Catalog.razor.css" />
+    <Content Include="Components\Account\Pages\Login.razor.css" />
+    <Content Include="Components\Account\Pages\Register.razor.css" />
+    <Content Include="Components\Pages\Home.razor.css" />
   </ItemGroup>
 
   <ItemGroup>
@@ -25,6 +29,7 @@
     </PackageReference>
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.6" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.6" />
+    <PackageReference Include="MimeKit" Version="4.7.0" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.2" />
   </ItemGroup>
 
@@ -35,15 +40,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="Components\Pages\GamePage.razor" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Folder Include="wwwroot\uploadedImages\" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Components\Pages\NewFolder\" />
   </ItemGroup>
 
 </Project>

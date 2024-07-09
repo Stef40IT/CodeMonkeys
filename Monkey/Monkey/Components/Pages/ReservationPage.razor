@@ -1,5 +1,6 @@
 ﻿@page "/Reservation"
 @rendermode InteractiveServer
+@using Microsoft.AspNetCore.Identity
 @using Monkey.Core.Projections.Games
 @using Monkey.Data.Data.Entities;
 @using System.Collections.Generic;
@@ -12,6 +13,8 @@
 @inject IReservationService reservService
 @inject IUserService userService
 @inject NavigationManager NavManager
+@inject AuthenticationStateProvider authStateProvider
+@inject UserManager<ApplicationUser> UserManager
 
 
 <PageTitle>Reserve</PageTitle>
@@ -39,20 +42,27 @@
     private DateTime returnDate = DateTime.Today;
     Reservation reserv;
     Game game;
-    User user;
+    ApplicationUser user;
 
-    protected override void OnInitialized()
+    protected override async void OnInitialized()
     {
         game = new Game();
         reserv = new Reservation();
-        user = new User();
+        var authState = await authStateProvider.GetAuthenticationStateAsync();
+        var userPrincipal = authState.User;
+
+        if (userPrincipal.Identity.IsAuthenticated)
+        {
+            user = await UserManager.GetUserAsync(userPrincipal);
+        }
     }
 
     private async void Add()
     {
         await Task.Delay(500);
         game = await gameService.GetByName(gameName);
-        user = await userService.GetById(1);
+        user = await userService.GetById("");
+
 
         if (!game.isBooked)
         {
@@ -72,7 +82,7 @@
 
         game = new Game();
         reserv = new Reservation();
-        user = new User();
+        user = new ApplicationUser();
         NavManager.NavigateTo("/catalog");
     }
 }
