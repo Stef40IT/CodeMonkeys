@@ -6,13 +6,12 @@ using Monkey.Data.Data.Entities;
 
 namespace Monkey.Data
 {
-    public class ApplicationDbContext : IdentityDbContext
+    public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {
 
         }
-        public DbSet<User> Users { get; set; }
         public DbSet<Game> Games { get; set; }
         public DbSet<Reservation> Reservations { get; set; }
         public DbSet<Rating> Ratings { get; set; }

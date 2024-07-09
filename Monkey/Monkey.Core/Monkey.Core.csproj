@@ -7,7 +7,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="MailKit" Version="4.7.0" />
+    <PackageReference Include="MimeKit" Version="4.7.0" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Monkey.Data\Monkey.Data.csproj" />
+    <ProjectReference Include="..\Monkey.Web.ViewModels\Monkey.Web.ViewModels.csproj" />
   </ItemGroup>
 
 </Project>

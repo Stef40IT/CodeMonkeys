@@ -1,0 +1,97 @@
+﻿@page "/contact"
+@using System.ComponentModel.DataAnnotations
+@using MailKit.Net.Smtp
+@using MimeKit
+@using Monkey.Core.Services.EmailServices
+@inject NavigationManager Navigation
+@inject IEmailService emailService
+
+<div class="field">
+    <div class="container">
+        <div class="content">
+            <div class="description">СВЪРЖИ СЕ С НАС</div>
+            <div class="container-form">
+                <EditForm Model="contactModel" OnValidSubmit="HandleSubmit" FormName="SubmitToGmail">
+                    <DataAnnotationsValidator />
+                    <ValidationSummary />
+                    <div class="entry">
+                        <label for="name">Име:</label>
+                        <InputText id="name" @bind-Value="contactModel.Name" required />
+                        <ValidationMessage For="() => contactModel.Name" />
+                    </div>
+
+                    <div class="entry">
+                        <label for="email">Email:</label>
+                        <InputText id="email" @bind-Value="contactModel.Email" type="email" required />
+                        <ValidationMessage For="() => contactModel.Email" />
+                    </div>
+
+                    <div class="entry">
+                        <label for="subject">Тема:</label>
+                        <InputText id="subject" @bind-Value="contactModel.Subject" required />
+                        <ValidationMessage For="() => contactModel.Subject" />
+                    </div>
+
+                    <div class="entry">
+                        <label for="message">Съобщение:</label>
+                        <InputTextArea id="message" @bind-Value="contactModel.Message" required />
+                        <ValidationMessage For="() => contactModel.Message" />
+                    </div>
+
+                    <button type="submit" class="submit-btn" value="submit">Изпрати</button>
+                    @if(isSubmited)
+                    {
+                          <div class="confirmation-message">
+                                    Вашето съобщение беше изпратено успешно!
+                          </div>                        
+                    }
+                </EditForm>
+            </div>
+        </div>
+        <div class="image">
+            <img src="https://th.bing.com/th/id/R.a8d7066cdaf2143c2333adc4045c5dd2?rik=N7tZm5hAwwN5Kw&pid=ImgRaw&r=0" alt="Alternate Text" />
+        </div>
+    </div>
+</div>
+
+    @code {
+    [SupplyParameterFromForm(FormName = "SubmitToGmail")]
+    private ContactModel contactModel { get; set; } = new ContactModel();
+    public bool isSubmited = false;
+    private async Task HandleSubmit()
+    {
+        try
+        {
+            if (emailService != null)
+            {
+                await emailService.SendEmailAsync(contactModel.Name, contactModel.Email, contactModel.Subject, contactModel.Message);
+                isSubmited = true;
+            }
+            else
+            {
+                Console.WriteLine("EmailService is not initialized.");
+            }
+        }
+        catch (Exception ex)
+        {
+            // Handle or log the exception
+            Console.WriteLine($"An error occurred: {ex.Message}");
+        }
+    }
+
+    public class ContactModel
+    {
+        [Required(ErrorMessage = "Name is required")]
+        public string Name { get; set; }
+
+        [Required(ErrorMessage = "Email is required")]
+        [EmailAddress(ErrorMessage = "Invalid email address")]
+        public string Email { get; set; }
+
+        [Required(ErrorMessage = "Subject is required")]
+        public string Subject { get; set; }
+
+        [Required(ErrorMessage = "Message is required")]
+        public string Message { get; set; }
+    }
+}

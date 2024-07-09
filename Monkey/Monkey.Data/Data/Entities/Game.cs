@@ -1,6 +1,6 @@
 ﻿namespace Monkey.Data.Data.Entities
 {
-    public class Game
+    public class Game : IIdentifiable
     {
         public int Id { get; set; }
         public string Description { get; set; }

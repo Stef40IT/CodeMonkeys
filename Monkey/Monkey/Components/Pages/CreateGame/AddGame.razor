@@ -1,0 +1,123 @@
+﻿@page "/game/create"
+@using Monkey.Core.Services.GameServices;
+@using Monkey.Web.ViewModels.Game
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject NavigationManager NavigationManager
+@inject IGameService gameService;
+@rendermode InteractiveServer
+<h3>AddGame</h3>
+
+<EditForm method="post" Model="Game" OnValidSubmit="CreateGame" FormName="GameForm">
+    <div>
+        <label>Заглавие на игра</label>
+        <InputText @bind-Value="Game.Name"></InputText>
+
+        <br />
+        <label>Описание на игра</label>
+        <InputText @bind-Value="Game.Description"></InputText>
+
+        <br />
+        <label>Трудност</label>
+        <InputNumber @bind-Value="Game.Difficulty"></InputNumber>
+
+        <br />
+        <label>Налични бройки</label>
+        <InputNumber @bind-Value="Game.Count"></InputNumber>
+
+        <br />
+        <label>Изображение</label>
+        <p>
+            <label>
+                Качете до @maxFileSize байтове:
+                <InputFile OnChange="LoadFiles" />
+            </label>
+        </p>
+        @if (isLoading)
+        {
+            <p>Uploading...</p>
+        }
+        else
+        {
+            <ul>
+                @if (loadedFiles != null)
+                {
+                    <li>
+                        <ul>
+                            <li>Име на изображение: @loadedFiles.Name</li>
+                            <li>Последно променена: @loadedFiles.LastModified.ToString()</li>
+                            <li>Размер (битове): @loadedFiles.Size</li>
+                            <li>Тип съдържание: @loadedFiles.ContentType</li>
+                        </ul>
+                    </li>
+                }
+            </ul>
+        }
+        <br />
+    </div>
+
+    <button type="submit">Публикувай</button>
+    <p role="status">@Message</p>
+</EditForm>
+
+@code {
+    [SupplyParameterFromForm(FormName = "GameForm")]
+    public GameViewModel Game { get; set; } = new GameViewModel();
+
+    public string Message { get; set; } = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        var isAdmin = user.IsInRole("Admin");
+
+        if (!isAdmin)
+        {
+            NavigationManager.NavigateTo("/");
+        }
+    }
+
+    public async void CreateGame()
+    {
+        if(loadedFiles == null)
+        {
+            Message = "Липсва снимка";
+            return;
+        }
+        var extension = System.IO.Path.GetExtension(loadedFiles.Name);
+        if(extension != ".jpg" && extension != ".png" && extension != ".jpeg")
+        {
+            Message = "Снимката трябва да е .png, .jpg или .jpeg";
+            return;
+        }
+        string path = "/uploadedImages/" + System.Guid.NewGuid() + extension;
+        await using FileStream fs = new("wwwroot" + path, FileMode.Create);
+        await loadedFiles.OpenReadStream().CopyToAsync(fs);
+
+        Game.Picture = path;
+        gameService.AddGame(Game);
+        Message = "Добавена!";
+    }
+
+    public IBrowserFile? loadedFiles { get; set; } = null;
+    public long maxFileSize = 1024 * 1500;
+    public bool isLoading;
+
+    public async Task LoadFiles(InputFileChangeEventArgs e)
+    {
+        isLoading = true;
+        try
+        {
+            loadedFiles = e.File;
+        }
+        catch (Exception ex)
+        {
+            Message = $"Error: {ex.Message}";
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+}

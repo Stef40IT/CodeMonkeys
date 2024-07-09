@@ -29,12 +29,18 @@
     </PackageReference>
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.6" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.6" />
+    <PackageReference Include="MimeKit" Version="4.7.0" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.2" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Monkey.Core\Monkey.Core.csproj" />
     <ProjectReference Include="..\Monkey.Data\Monkey.Data.csproj" />
     <ProjectReference Include="..\Monkey.Web.ViewModels\Monkey.Web.ViewModels.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="wwwroot\uploadedImages\" />
   </ItemGroup>
 
 </Project>
