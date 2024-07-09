@@ -8,18 +8,17 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Components\Pages\NewFolder\**" />
-    <Content Remove="Components\Pages\NewFolder\**" />
-    <EmbeddedResource Remove="Components\Pages\NewFolder\**" />
-    <None Remove="Components\Pages\NewFolder\**" />
+    <None Remove="Components\Account\Pages\Login.razor.css" />
+    <None Remove="Components\Account\Pages\Register.razor.css" />
+    <None Remove="Components\Pages\Home.razor.css" />
   </ItemGroup>
+
   <ItemGroup>
-    <PackageReference Include="MailKit" Version="4.7.0" />
-    <None Remove="Components\Pages\Catalog\Catalog.razor.css" />
+    <Content Include="Components\Account\Pages\Login.razor.css" />
+    <Content Include="Components\Account\Pages\Register.razor.css" />
+    <Content Include="Components\Pages\Home.razor.css" />
   </ItemGroup>
-  <ItemGroup>
-    <Content Include="Components\Pages\Catalog\Catalog.razor.css" />
-  </ItemGroup>
+
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="8.0.6" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.6" />
