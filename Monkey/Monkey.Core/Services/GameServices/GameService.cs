@@ -142,8 +142,11 @@ namespace Monkey.Core.Services.GameServices
                 }
                 await Repository.GetDb().SaveChangesAsync();
             }
+        }
 
-
+        public async Task<Game>? GetGameById(int? id)
+        {
+            return Repository.GetDb().Games.SingleOrDefault(g => g.Id == id);
         }
     }
 }

@@ -2,7 +2,9 @@
 @using Monkey.Core.Services.GameServices
 @using Monkey.Data;
 @using Monkey.Data.Data.Entities;
+@rendermode InteractiveServer
 @inject IGameService gameService;
+@inject NavigationManager NavManager
 
 <h3>Game</h3>
 
@@ -44,8 +46,6 @@
             }
         </table>
     }
-
-    
 }
 
 @code {
@@ -62,5 +62,4 @@
             // Rating = game.Raitings.Average()
         }
     }
-   
 }

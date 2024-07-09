@@ -6,9 +6,9 @@ using Monkey.Components.Account;
 using Monkey.Core.Services;
 using Monkey.Core.Services.FavoriteServices;
 using Monkey.Core.Services.EmailServices;
+using Monkey.Core.Services.UserService;
 using Monkey.Core.Services.GameServices;
 using Monkey.Core.Services.ReservatioService;
-using Monkey.Core.Services.UserService;
 using Monkey.Data;
 using Monkey.Data.Data.Entities;
 using Monkey.Data.Data.Repositories;
@@ -36,12 +36,14 @@ builder.Services.AddScoped<AuthenticationStateProvider, IdentityRevalidatingAuth
 
 builder.Services.AddScoped<IFavoriteService, FavoriteService>();
 builder.Services.AddScoped<IRepository<Game>, Repository<Game>>();
+builder.Services.AddScoped<IReservationService, ReservationService>();
 builder.Services.AddScoped<IGameService, GameService>();
 builder.Services.AddScoped<IReservationService, ReservationService>();
 builder.Services.AddScoped<IUserService, UserService>();
 
 
 builder.Services.AddScoped<IEmailService, EmailService>();
+
 
 
 builder.Services.AddAuthentication(options =>

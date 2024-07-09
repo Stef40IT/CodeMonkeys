@@ -18,5 +18,6 @@ namespace Monkey.Core.Services.GameServices
         public void UpdateCountDown(int id);
         public void UpdateCountUp(int id);
         public Task<Game> GetByName(string name);
+        public Task<Game>? GetGameById(int? id);
     }
 }

@@ -89,9 +89,11 @@
         var result = await SignInManager.PasswordSignInAsync(Input.Email, Input.Password, Input.RememberMe, lockoutOnFailure: false);
         if (result.Succeeded)
         {
+            NavigationManager.NavigateTo("/home");
             Logger.LogInformation("Потребителят успешно влезна в акаунта си.");
             NavigationManager.NavigateTo(ReturnUrl ?? "/catalog");
         }
+
         else if (result.RequiresTwoFactor)
         {
             NavigationManager.NavigateTo(
@@ -106,6 +108,7 @@
         {
             errorMessage = "Error: Invalid login attempt.";
         }
+
     }
 
     private sealed class InputModel

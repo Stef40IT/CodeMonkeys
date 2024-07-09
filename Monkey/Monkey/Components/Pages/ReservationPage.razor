@@ -1,4 +1,5 @@
-﻿@page "/Reservation"
+﻿@page "/Reservation/{Id:int}"
+@page "/Reservation"
 @rendermode InteractiveServer
 @using Microsoft.AspNetCore.Identity
 @using Monkey.Core.Projections.Games
@@ -26,45 +27,53 @@
 </div>
 <div>
     <label>Textbox 2:</label>
-    <input type="date" @bind-value="bookDate" />
+    <input type="datetime" @bind-value="bookDate" />
 </div>
 <div>
     <label>Textbox 3:</label>
-    <input type="date" @bind-value="returnDate" />
+    <input type="datetime" @bind-value="returnDate" />
 </div>
 <div>
-    <button @onclick="Add">reserve</button>
+    <NavLink class="nav-link" href="catalog">
+        <button @onclick="Add">reserve</button>
+    </NavLink>
 </div>
 
 @code {
+    [Parameter]
+    public int? Id { get; set; }
     private string gameName;
     private DateTime bookDate = DateTime.Today;
     private DateTime returnDate = DateTime.Today;
     Reservation reserv;
-    Game game;
+    Game? game;
     ApplicationUser user;
 
     protected override async void OnInitialized()
     {
+        if (Id.HasValue)
+        {
+            gameName = (await gameService.GetGameById(Id)).Name;
+        }
         game = new Game();
         reserv = new Reservation();
         var authState = await authStateProvider.GetAuthenticationStateAsync();
         var userPrincipal = authState.User;
-
-        if (userPrincipal.Identity.IsAuthenticated)
-        {
-            user = await UserManager.GetUserAsync(userPrincipal);
-        }
+        user = await UserManager.GetUserAsync(userPrincipal);
     }
 
     private async void Add()
     {
-        await Task.Delay(500);
-        game = await gameService.GetByName(gameName);
-        user = await userService.GetById("");
+        if (Id.HasValue)
+        {
+            game = await gameService.GetGameById(Id);
+        }
+        else
+        {
+            game = await gameService.GetByName(gameName);
+        }
 
-
-        if (!game.isBooked)
+        if (!game.isBooked && DateTime.Compare(bookDate, returnDate) <= 0)
         {
             reserv.Game = game;
             reserv.BookDate = bookDate;
@@ -73,16 +82,16 @@
             reserv.User = user;
             reservService.Create(reserv);
             gameService.UpdateCountDown(game.Id);
-            
+
         }
         else
         {
             throw new Exception("Играта не е в наличност");
+
         }
 
         game = new Game();
         reserv = new Reservation();
         user = new ApplicationUser();
-        NavManager.NavigateTo("/catalog");
     }
 }
