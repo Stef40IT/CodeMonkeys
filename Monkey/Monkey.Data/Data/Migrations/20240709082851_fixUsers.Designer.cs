@@ -12,8 +12,8 @@ using Monkey.Data;
 namespace Monkey.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240708133752_ApplicationUserMigration")]
-    partial class ApplicationUserMigration
+    [Migration("20240709082851_fixUsers")]
+    partial class fixUsers
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -220,7 +220,7 @@ namespace Monkey.Migrations
                         .HasDatabaseName("UserNameIndex")
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
-                    b.ToTable("Users", (string)null);
+                    b.ToTable("AspNetUsers", (string)null);
                 });
 
             modelBuilder.Entity("Monkey.Data.Data.Entities.Comment", b =>
