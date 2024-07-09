@@ -1,1 +1,36 @@
-﻿@page "/Account/Login"    
+﻿@page "/home"
+@rendermode InteractiveServer
+@using Monkey.Core.Projections.Games
+@using Monkey.Data.Data.Entities
+@using Monkey.Core.Services.GameServices
+@using Monkey.Core.Projections
+@using Monkey.Web.ViewModels.Catalog
+@inject NavigationManager NavManager
+@inject GameService gameService
+
+<PageTitle>Home</PageTitle>
+
+<h3>Home</h3>
+@for(int i = 0; i < 3; i++)
+{
+    //Place Html and css
+}
+@for (int i = 0; i < 3; i++)
+{
+    //Place Html and css
+}
+
+@code {
+    private List<GameGeneralInfoProjection> gameList;
+    private List<GameGeneralInfoProjection> fourPlayerGames;
+    private List<GameGeneralInfoProjection> bestRaitingGames;
+
+    protected override async Task OnInitializedAsync()
+    {
+        gameList = (await gameService.GetAllGames()).ToList();
+        bestRaitingGames = gameList.OrderBy(g => AverageRating(g.Raitings)).ToList();
+        fourPlayerGames = gameList.Where(g => g.Difficulty >= 4).ToList();
+    }
+
+    private double AverageRating(ICollection<Rating> ratings) => ratings.Average(r => r.Rate);
+}
