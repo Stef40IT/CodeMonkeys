@@ -29,8 +29,8 @@ builder.Services.Configure<IdentityOptions>(options =>
 builder.Services.AddScoped<IdentityUserAccessor>();
 builder.Services.AddScoped<IdentityRedirectManager>();
 builder.Services.AddScoped<AuthenticationStateProvider, IdentityRevalidatingAuthenticationStateProvider>();
-builder.Services.AddScoped<IRepository<Game>,Repository<Game>>();
-builder.Services.AddScoped<IGameService,GameService>();
+builder.Services.AddScoped<IRepository<Game>, Repository<Game>>();
+builder.Services.AddScoped<IGameService, GameService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<IRepository<Game>, Repository<Game>>();
 builder.Services.AddScoped<IGameService, GameService>();
@@ -103,15 +103,20 @@ using (var scope = app.Services.CreateScope())
     string email = "admin@admin.com";
     string password = "Admin123+";
 
-    //if (await userManager.FindByEmailAsync(email) == null)
-    //{
-        var user = new ApplicationUser();
-        user.UserName = email;
-        user.Email = email;
+    if (await userManager.FindByEmailAsync(email) == null)
+    {
+        var user = new ApplicationUser
+        {
+            UserName = email,
+            Email = email
+        };
 
-        await userManager.CreateAsync(user, password);
-        await userManager.AddToRoleAsync(user, "Admin");
-    //}
+        var result = await userManager.CreateAsync(user, password);
+        if (result.Succeeded)
+        {
+            await userManager.AddToRoleAsync(user, "Admin");
+        }
+    }
 }
 
 app.Run();
