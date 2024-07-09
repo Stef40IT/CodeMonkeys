@@ -7,6 +7,8 @@ using Monkey.Core.Services;
 using Monkey.Core.Services.FavoriteServices;
 using Monkey.Core.Services.EmailServices;
 using Monkey.Core.Services.GameServices;
+using Monkey.Core.Services.ReservatioService;
+using Monkey.Core.Services.UserService;
 using Monkey.Data;
 using Monkey.Data.Data.Entities;
 using Monkey.Data.Data.Repositories;
@@ -31,16 +33,17 @@ builder.Services.Configure<IdentityOptions>(options =>
 builder.Services.AddScoped<IdentityUserAccessor>();
 builder.Services.AddScoped<IdentityRedirectManager>();
 builder.Services.AddScoped<AuthenticationStateProvider, IdentityRevalidatingAuthenticationStateProvider>();
-builder.Services.AddScoped<IRepository<Game>,Repository<Game>>();
-builder.Services.AddScoped<IGameService,GameService>();
+
 builder.Services.AddScoped<IFavoriteService, FavoriteService>();
-
-
 builder.Services.AddScoped<IRepository<Game>, Repository<Game>>();
 builder.Services.AddScoped<IGameService, GameService>();
+builder.Services.AddScoped<IReservationService, ReservationService>();
+builder.Services.AddScoped<IUserService, UserService>();
+
+
 builder.Services.AddScoped<IEmailService, EmailService>();
-builder.Services.AddScoped<IRepository<Game>, Repository<Game>>();
-builder.Services.AddScoped<IGameService, GameService>();
+
+
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultScheme = IdentityConstants.ApplicationScheme;

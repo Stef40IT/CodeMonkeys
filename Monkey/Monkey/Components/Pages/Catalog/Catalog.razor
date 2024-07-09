@@ -9,21 +9,25 @@
 
 <PageTitle>Каталог</PageTitle>
 
-<h1 class="catalog-title">Каталог</h1>
-<div class="title-underline"></div>
-<div>
-    <label for="sort">Сортирай по: </label>
-    <select id="sort" @bind="SelectedCriteria">
-        <option value="">Избери критерия</option>
-        <option value="Name">Име(А-Я)</option>
-        <option value="Name(Descending)">Име(Я-А)</option>
-        <option value="Difficulty">Сложност(1-4)</option>
-        <option value="DifficultyDescending">Сложност(4-1)</option>
-        <option value="Rating">Оценка</option>
-        <option value="Count">Налични</option>
-        
-    </select>
+<div class="catalog-header">
+    <div>
+        <h1 class="catalog-title">Каталог</h1>
+        <div class="title-underline"></div>
+    </div>
+    <div class="filter-container">
+        <label for="sort"></label>
+        <select id="sort" @bind="SelectedCriteria">
+            <option value="">Избери критерия</option>
+            <option value="Name">Име(А-Я)</option>
+            <option value="Name(Descending)">Име(Я-А)</option>
+            <option value="Difficulty">Сложност(1-4)</option>
+            <option value="DifficultyDescending">Сложност(4-1)</option>
+            <option value="Rating">Оценка</option>
+            <option value="Count">Налични</option>
+        </select>
+    </div>
 </div>
+
 <div class="game-container">
     <div class="game-grid">
         @if (GameList == null || !GameList.Any())
@@ -44,6 +48,11 @@
                                 <div class="game-count">Available: @game.Count</div>
                                 <div class="game-difficulty">Difficulty: @game.Difficulty</div>
                             </div>
+                            <div class="favorite-icon">
+                                <svg viewBox="0 0 24 24" width="24" height="24" class="@GetHeartClass(game.Id)" @onclick="() => ToggleFavorite(game.Id)">
+                                    <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41 0.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+                                </svg>
+                            </div>
                         </div>
                     }
                 </div>
@@ -56,11 +65,14 @@
     private List<GameGeneralInfoProjection> GameList;
     private List<GameGeneralInfoProjection> sortedGames;
     private string selectedCriteria;
+    private HashSet<int> favoriteGames = new();
+
     protected override async Task OnInitializedAsync()
     {
         GameList = (await gameService.GetAllGames()).Take(20).ToList();
         sortedGames = GameList;
     }
+
     private string SelectedCriteria
     {
         get => selectedCriteria;
@@ -70,6 +82,7 @@
             OnCriteriaChanged();
         }
     }
+
     private void OnCriteriaChanged()
     {
         if (string.IsNullOrEmpty(selectedCriteria))
@@ -98,15 +111,30 @@
             case "Count":
                 sortedGames = GameList.OrderByDescending(g => g.Count).ToList();
                 break;
-
             default:
                 sortedGames = GameList;
                 break;
         }
     }
+
     [Inject]
     private IGameService gameService { get; set; }
 
-    private void OpenGameDetails(int gameId) => NavManager.NavigateTo("/game");
+    private void OpenGameDetails(int gameId) => NavManager.NavigateTo($"/game/{gameId}");
+
     private double AverageRating(ICollection<Rating> ratings) => ratings.Average(r => r.Rate);
+
+    private void ToggleFavorite(int gameId)
+    {
+        if (favoriteGames.Contains(gameId))
+        {
+            favoriteGames.Remove(gameId);
+        }
+        else
+        {
+            favoriteGames.Add(gameId);
+        }
+    }
+
+    private string GetHeartClass(int gameId) => favoriteGames.Contains(gameId) ? "heart-icon filled" : "heart-icon";
 }
