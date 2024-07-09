@@ -1,0 +1,134 @@
+﻿.game-container {
+    display: flex;
+    align-items: flex-start;
+    position: relative;
+    padding-bottom: 50px;
+}
+
+.game-header {
+    position: absolute;
+    top: -53px;
+    right: 1;
+    background-color: orange;
+    color: white;
+    padding: 5px 10px;
+    font-weight: bold;
+    font-size: 1.2em;
+    z-index: 1;
+    border-radius: 4px;
+}
+
+.game-title {
+    display: inline-block;
+    font-size: 1.2em;
+    margin-right: 10px;
+}
+
+.game-info {
+    display: inline-block;
+    font-size: 0.9em;
+}
+
+.game-image-container {
+    position: relative;
+    margin-right: 20px;
+    display: inline-block;
+}
+
+.game-image {
+    width: 350px;
+    height: auto;
+    display: block;
+}
+
+.game-details-container {
+    display: flex;
+    margin-top: 0px;
+}
+
+.game-details {
+    background-color: orange;
+    color: white;
+    padding: 10px;
+    width: 500px;
+    height: 300px;
+    border-radius: 5px;
+    margin-right: 70px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+}
+
+.forma {
+    width: 300px;
+    position: relative; 
+}
+
+    .forma .form-field {
+        margin-bottom: 15px;
+    }
+
+    .forma label {
+        display: block;
+        margin-bottom: 5px;
+    }
+
+    .forma input {
+        width: calc(100% - 10px);
+        padding: 8px;
+        border: 1px solid #000;
+        border-radius: 5px;
+        box-sizing: border-box;
+        color: black; 
+    }
+
+    .forma button {
+        background-color: #f90; 
+        color: white; 
+        border: none;
+        padding: 8px 16px;
+        margin-top: 0px;
+        border-radius: 20px;
+        cursor: pointer;
+        transition: background-color 0.3s, color 0.3s, transform 0.2s;
+        position: absolute;
+        bottom: 1;
+        right: 0;
+    }
+
+        .forma button:hover,
+        .forma button:focus {
+            background-color: #007bff; 
+            outline: none;
+            transform: scale(1.05);
+        }
+
+        .forma button:active {
+            transform: scale(0.95);
+        }
+
+.action-buttons {
+    position: absolute;
+    bottom: -50px;
+    right: 1;
+}
+
+.action-button {
+    background-color: orange;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    margin-left: 0;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+    .action-button:hover {
+        background-color: #007bff;
+    }
+
+@media (max-width: 768px) {
+    .game-details {
+        width: auto;
+        margin-right: 0;
+    }
+}
