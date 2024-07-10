@@ -95,6 +95,7 @@
                         @if(isAdmin)
                         {
                             <button @onclick="async () => await Delete(game.Id)">Изтрий</button>
+                            <button @onclick="async () => await Update(game.Id)">Редактирай</button>
                         }
                     }
                 </div>
@@ -189,6 +190,10 @@
         gameService.Delete(id);
         GameList = (await gameService.GetAllGames()).Take(20).ToList();
         sortedGames = GameList;
+    }
+    private async Task Update(int id)
+    {
+        NavManager.NavigateTo($"game/edit/{id}");
     }
 
     private string GetHeartClass(int gameId) => favoriteGames.Contains(gameId) ? "heart-icon filled" : "heart-icon";

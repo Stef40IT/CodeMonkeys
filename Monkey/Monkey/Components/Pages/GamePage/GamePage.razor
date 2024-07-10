@@ -1,9 +1,14 @@
 ﻿@page "/game/{id:int}"
+@using Monkey.Core.Services.CommentServices
 @using Monkey.Core.Services.GameServices
 @using Monkey.Data;
+@inject ICommentService CommentService
 @using Monkey.Data.Data.Entities;
-@inject AuthenticationStateProvider AuthenticationStateProvider
+@using System.Security.Claims
 @inject IGameService gameService;
+@inject NavigationManager Navigation
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@rendermode InteractiveServer
 
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <div class="container-fluid">
@@ -48,7 +53,7 @@
         <div class="game-image-container">
             <img src="@game.Picture" class="game-image" />
             <NavLink class="nav-link" href="catalog">
-                    <button class="action-button"><b>Върни</b></button>
+                    @*@<button class="action-button" @onclick="() => Return()"><b>Върни</b></button>*@
             </NavLink>
         </div>
         <div class="game-details-container">
@@ -77,54 +82,114 @@
                         <label for="end-time">Час до:</label>
                         <input type="text" id="end-time" name="end-time" required pattern="[0-9]{1,2}:[0-9]{2}">
                     </div>
+
                     <button type="submit"><b>Запази игра</b></button>
+
                 </form>
             </div>
-            @if (game.Comments != null)
-            {
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Текст</th>
-                            <th>Час</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var comment in game.Comments)
-                        {
-                            <tr>
-                                <td>@comment.Text</td>
-                                <td>@comment.Hour</td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
-            }
         </div>
     </div>
-}
 
+
+    <h3>Коментари за играта</h3>
+
+    <h4>Добави коментар</h4>
+    <EditForm method="post" Model="Comment" OnValidSubmit="HandleValidSubmit" FormName="commentForm">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+        <input @bind-value="Comment.Text" placeholder="Вашият коментар"></input>
+
+        <button type="submit">
+            Добави
+        </button>
+    </EditForm>
+    @if (comments == null)
+    {
+        <p>Зареждане...</p>
+    }
+    else
+    {
+        <ul>
+            @foreach (var comment in comments)
+            {
+                <li>
+                    <strong>@comment.User.UserName</strong> (@comment.Hour.ToString("g")):
+                    <p>@comment.Text</p>
+                    @if(isAdmin)
+                    {
+                        <button @onclick="async () => await Delete(comment)">Изтрий</button>
+                    }
+                </li>
+            }
+        </ul>
+    }
+
+
+    @if (!string.IsNullOrEmpty(errorMessage))
+    {
+        <p style="color:red;">@errorMessage</p>
+    }
+}
 @code {
-    Game game;
+    private Game game;
 
     [Parameter]
     public int Id { get; set; }
-    bool isAdmin;
+
+    private List<Comment> comments;
+    [SupplyParameterFromForm(FormName = "commentForm")]
+    public Comment Comment { get; set; } = new Comment();
+    private string errorMessage;
+    public bool isAdmin;
 
     protected override async Task OnInitializedAsync()
     {
+        game = gameService.GetById(Id);
+        await LoadComments();
 
-    
+
         var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
         var user = authState.User;
-
         isAdmin = user.IsInRole("Admin");
 
-      
-        if (game == null)
+        if (user.Identity.IsAuthenticated)
         {
-            game = gameService.GetById(Id);
+            Comment.UserId = user.FindFirst(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+        }
+        else
+        {
+            Navigation.NavigateTo("/login");
         }
     }
 
+    private async Task Delete(Comment comment)
+    {
+        await CommentService.DeleteCommentAsync(comment);
+        await LoadComments();
+    }
+
+    private async Task LoadComments()
+    {
+        comments = await CommentService.GetCommentsByGameIdAsync(Id);
+    }
+
+
+    private async Task HandleValidSubmit()
+    {
+        if (string.IsNullOrEmpty(Comment.Text))
+        {
+            errorMessage = "Коментарът не може да бъде празен.";
+            return;
+        }
+        Comment.GameId = Id;
+        Comment.Hour = DateTime.Now;
+        await CommentService.AddCommentAsync(Comment);
+        
+        comments = new List<Comment>();
+        
+        await LoadComments();
+
+        //Navigation.NavigateTo($"game/{this.Id}", forceLoad:true);
+    }
 }
