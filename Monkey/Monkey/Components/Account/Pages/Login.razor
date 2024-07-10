@@ -1,16 +1,13 @@
 ﻿@page "/"
-
 @using System.ComponentModel.DataAnnotations
 @using Microsoft.AspNetCore.Authentication
 @using Microsoft.AspNetCore.Identity
 @using Monkey.Data
 @using Monkey.Data.Data.Entities
-
 @inject SignInManager<ApplicationUser> SignInManager
 @inject ILogger<Login> Logger
 @inject NavigationManager NavigationManager
 @inject NavigationManager NavManager
-
 <PageTitle>Log in</PageTitle>
 
 <div class="center-container">
