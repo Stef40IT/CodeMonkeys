@@ -18,6 +18,10 @@
     justify-content: center;
     width: 100%;
 }
+textarea {
+    resize: vertical;
+    width: 250px;
+}
 
 .container {
     display: flex;
