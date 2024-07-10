@@ -2,52 +2,66 @@
 @using Monkey.Core.Services.GameServices
 @using Monkey.Data;
 @using Monkey.Data.Data.Entities;
+@using Microsoft.AspNetCore.Identity
+@using Monkey.Core.Projections.Games
+@using System.Collections.Generic;
+@using Monkey.Core.Services.ReservatioService;
+@using Monkey.Data.Data.Repositories
+@using Monkey.Core.Projections;
+@using Monkey.Core.Services.UserService
+@using System.Security.Claims
+@inject AuthenticationStateProvider AuthenticationStateProvider
 @inject IGameService gameService;
+@inject IReservationService reservService
+@inject IUserService userService
+@inject NavigationManager NavManager
+@inject AuthenticationStateProvider authStateProvider
+@inject UserManager<ApplicationUser> UserManager
 
 <h3>Игра</h3>
 
 @if (game != null)
 {
-    <div class="game-container">
-        <div class="game-header">
-            <div class="game-title">@game.Name</div>
-            <div class="game-info">Сложност: @game.Difficulty | Оставащи: @game.Count</div>
-        </div>
-        <div class="game-image-container">
-            <img src="@game.Picture" class="game-image" />
-            <div class="action-buttons">
-                <button class="action-button"><b>Върни</b></button>
+        <div class="game-container">
+            <div class="game-header">
+                <div class="game-title">@game.Name</div>
+                <div class="game-info">Сложност: @game.Difficulty | Оставащи: @game.Count</div>
             </div>
-        </div>
-        <div class="game-details-container">
-            <div class="game-details">
-                <b>  <p>@game.Description</p></b>
+            <div class="game-image-container">
+                <img src="@game.Picture" class="game-image" />
+                <div class="action-buttons">
+                    <button class="action-button"><b>Върни</b></button>
+                </div>
             </div>
-            <div class="forma">
-                <form>
-                    <div class="form-field">
-                        <label for="name">Въведи име:</label>
-                        <input type="text" id="name" name="name" required>
-                    </div>
-                    <div class="form-field">
-                        <label for="start-date">Дата от:</label>
-                        <input type="date" id="start-date" name="start-date" required>
-                    </div>
-                    <div class="form-field">
-                        <label for="start-time">Час от:</label>
-                        <input type="text" id="start-time" name="start-time" required pattern="[0-9]{1,2}:[0-9]{2}">
-                    </div>
-                    <div class="form-field">
-                        <label for="end-date">Дата до:</label>
-                        <input type="date" id="end-date" name="end-date" required>
-                    </div>
-                    <div class="form-field">
-                        <label for="end-time">Час до:</label>
-                        <input type="text" id="end-time" name="end-time" required pattern="[0-9]{1,2}:[0-9]{2}">
-                    </div>
-                    <button type="submit"><b>Запази игра</b></button>
-                </form>
-            </div>
+            <div class="game-details-container">
+                <div class="game-details">
+                    <b>  <p>@game.Description</p></b>
+                </div>
+                <div class="forma">
+                    <form>
+                        <div class="form-field">
+                            <label for="name">Въведи име:</label>
+                            <input type="text" id="name" name="name" required>
+                        </div>
+                        <div class="form-field">
+                            <label for="start-date">Дата от:</label>
+                            <input type="date" id="start-date" name="start-date" required>
+                        </div>
+                        <div class="form-field">
+                            <label for="start-time">Час от:</label>
+                            <input type="text" id="start-time" name="start-time" required pattern="[0-9]{1,2}:[0-9]{2}">
+                        </div>
+                        <div class="form-field">
+                            <label for="end-date">Дата до:</label>
+                            <input type="date" id="end-date" name="end-date" required>
+                        </div>
+                        <div class="form-field">
+                            <label for="end-time">Час до:</label>
+                            <input type="text" id="end-time" name="end-time" required pattern="[0-9]{1,2}:[0-9]{2}">
+                        </div>
+                        <button type="submit"><b>Запази игра</b></button>
+                    </form>
+                </div>
             @if (game.Comments != null)
             {
                 <table>
@@ -72,17 +86,61 @@
     </div>
 }
 
+
 @code {
-    Game game;
-
     [Parameter]
-    public int Id { get; set; }
+    public int? Id { get; set; }
+    private string gameName;
+    private DateTime bookDate = DateTime.Today;
+    private DateTime returnDate = DateTime.Today;
+    Reservation reserv;
+    Game? game;
+    ApplicationUser user;
 
-    protected override async Task OnInitializedAsync()
+    protected override async void OnInitialized()
     {
-        if (game == null)
+        if (Id.HasValue)
         {
-            game = gameService.GetById(Id);
+            gameName = (await gameService.GetGameById(Id)).Name;
         }
+        game = new Game();
+        reserv = new Reservation();
+        var authState = await authStateProvider.GetAuthenticationStateAsync();
+        var userPrincipal = authState.User;
+        user = await userService.GetById(userPrincipal.FindFirstValue(ClaimTypes.NameIdentifier));
+    }
+
+    private async void Add()
+    {
+        if (Id.HasValue)
+        {
+            game = await gameService.GetGameById(Id);
+        }
+        else
+        {
+            game = await gameService.GetByName(gameName);
+        }
+
+        if (!game.isBooked && DateTime.Compare(bookDate, returnDate) <= 0)
+        {
+            reserv.Game = game;
+            reserv.BookDate = bookDate;
+            reserv.ReturnDate = returnDate;
+            reserv.BookDate = bookDate;
+            reserv.User = user;
+            reservService.Create(reserv);
+            gameService.UpdateCountDown(game.Id);
+
+        }
+        else
+        {
+            throw new Exception("Играта не е в наличност");
+
+        }
+
+        game = new Game();
+        reserv = new Reservation();
+        user = new ApplicationUser();
     }
 }
+

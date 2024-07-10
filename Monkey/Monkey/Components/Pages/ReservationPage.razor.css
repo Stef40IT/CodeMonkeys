@@ -8,7 +8,7 @@
 .game-header {
     position: absolute;
     top: -53px;
-    right: 1;
+    right: 1px; /* Added px for proper positioning */
     background-color: orange;
     color: white;
     padding: 5px 10px;
@@ -25,7 +25,7 @@
 }
 
 .game-info {
-    display: inline-block;a
+    display: inline-block;
     font-size: 0.9em;
 }
 
@@ -59,7 +59,7 @@
 
 .forma {
     width: 300px;
-    position: relative; 
+    position: relative;
 }
 
     .forma .form-field {
@@ -77,12 +77,12 @@
         border: 1px solid #000;
         border-radius: 5px;
         box-sizing: border-box;
-        color: black; 
+        color: black;
     }
 
     .forma button {
-        background-color: #f90; 
-        color: white; 
+        background-color: #f90;
+        color: white;
         border: none;
         padding: 8px 16px;
         margin-top: 0px;
@@ -90,13 +90,13 @@
         cursor: pointer;
         transition: background-color 0.3s, color 0.3s, transform 0.2s;
         position: absolute;
-        bottom: 1;
+        bottom: 1px; /* Added px for proper positioning */
         right: 0;
     }
 
         .forma button:hover,
         .forma button:focus {
-            background-color: #007bff; 
+            background-color: #007bff;
             outline: none;
             transform: scale(1.05);
         }
@@ -108,7 +108,7 @@
 .action-buttons {
     position: absolute;
     bottom: -50px;
-    right: 1;
+    right: 1px; /* Added px for proper positioning */
 }
 
 .action-button {
