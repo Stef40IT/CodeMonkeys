@@ -26,18 +26,38 @@
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-            <a class="navbar-brand" href="#">Brendan</a>
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ml-auto">
-                    <li class="nav-item"><a class="nav-link" href="#home">Home</a></li>
-                    <li class="nav-item"><a class="nav-link" href="card.html">Card</a></li>
-                    <li class="nav-item"><a class="nav-link" href="probe.html">Probe</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#contact">Contact</a></li>
-                </ul>
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <div class="container-fluid">
+                <NavLink href="/home" style="text-decoration: none">
+                    <a class="navbar-brand">Board Games</a>
+                </NavLink>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                        <li class="nav-item">
+                            <NavLink href="/home" style="text-decoration: none">
+                                <a class="nav-link">Начало</a>
+                            </NavLink>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/catalog">Каталог</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">Статистики</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/contact">Свържи се с нас</a>
+                        </li>
+                        @if (isAdmin)
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link" href="/game/create">Добави игра</a>
+                            </li>
+                        }
+                    </ul>
+                </div>
             </div>
         </nav>
     </header>
@@ -89,43 +109,20 @@
 
         <h1><strong>Игри с най-висок рейтинг</strong></h1>
         <div class="card-container">
-            <div class="col-md-4">
-                <div class="card card1">
+            @foreach (var game in FourPlayersList)
+            {
+                <div class="col-md-4">
+                    <div class="card" style="background-image: url('@game.Picture'); background-size: 100%;background-repeat: no-repeat;">
                     <div class="card-content">
-                        <h2 class="card-title"> нещо яко</h2>
+                        <h2 class="card-title">@game.Name</h2>
                         <p class="card-body">
-                            Lorem ipsum dolor sit amet consectetur, adipisicing elit. Eum odio rerum iure. Quos, facilis ea earum
-                            aperiam ipsum sapiente aspernatur.
+                            Брой играчи: @game.Difficulty | Рейтинг: @game.Raitings
                         </p>
                         <a href="#" class="button">резервирай</a>
                     </div>
                 </div>
             </div>
-            <div class="col-md-4">
-                <div class="card card2">
-                    <div class="card-content">
-                        <h2 class="card-title"> нещо яко</h2>
-                        <p class="card-body">
-                            Lorem ipsum dolor sit amet consectetur, adipisicing elit. Eum odio rerum iure. Quos, facilis ea earum
-                            aperiam ipsum sapiente aspernatur.
-                        </p>
-                        <a href="#" class="button">резервирай</a>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="card card3">
-                    <div class="card-content">
-                        <h2 class="card-title"> нещо яко</h2>
-                        <p class="card-body">
-                            Lorem ipsum dolor sit amet consectetur, adipisicing elit. Eum odio rerum iure. Quos, facilis ea earum
-                            aperiam ipsum sapiente aspernatur.
-                        </p>
-                        <a href="#" class="button">резервирай</a>
-                    </div>
-                </div>
-            </div>
-
+            }
         </div>
     </section>
 
@@ -142,7 +139,7 @@
                         <h2 class="card-title">@game.Name</h2>
                         <p class="card-body">
                             @* @firstSentence *@
-                            @game.Difficulty | @game.Raitings
+                                Брой играчи: @game.Difficulty | Рейтинг: @game.Raitings
                         </p>
                         <a href="#" class="button">резервирай</a>
                     </div>
@@ -154,45 +151,26 @@
     </section>
 
     <section class="custom-container mt-5">
-        <h1><strong>случайни игри</strong></h1>
+        <h1><strong>Случайни игри</strong></h1>
         <div class="card-container">
-            <div class="col-md-4">
-                <div class="card card1">
-                    <div class="card-content">
-                        <h2 class="card-title"> нещо яко</h2>
-                        <p class="card-body">
-                            Lorem ipsum dolor sit amet consectetur, adipisicing elit. Eum odio rerum iure. Quos, facilis ea earum
-                            aperiam ipsum sapiente aspernatur.
-                        </p>
-                        <a href="#" class="button">резервирай</a>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="card card2">
-                    <div class="card-content">
-                        <h2 class="card-title"> нещо яко</h2>
-                        <p class="card-body">
-                            Lorem ipsum dolor sit amet consectetur, adipisicing elit. Eum odio rerum iure. Quos, facilis ea earum
-                            aperiam ipsum sapiente aspernatur.
-                        </p>
-                        <a href="#" class="button">резервирай</a>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="card card3">
-                    <div class="card-content">
-                        <h2 class="card-title"> нещо яко</h2>
-                        <p class="card-body">
-                            Lorem ipsum dolor sit amet consectetur, adipisicing elit. Eum odio rerum iure. Quos, facilis ea earum
-                            aperiam ipsum sapiente aspernatur.
-                        </p>
-                        <a href="#" class="button">резервирай</a>
-                    </div>
-                </div>
-            </div>
+            @foreach (var game in RandomGamesList)
+            {
+                @* string firstSentence = System.Text.RegularExpressions.Regex.Match(game.Description, @"^.*?[\.!\?\,](?:\s|$)").Value; *@
 
+                <div class="col-md-4">
+                    <div class="card" style="background-image: url('@game.Picture'); background-size: 100%;background-repeat: no-repeat;">
+                        <div class="card-content">
+                            <h2 class="card-title">@game.Name</h2>
+                            <p class="card-body">
+                                @* @firstSentence *@
+                                Брой играчи: @game.Difficulty | Рейтинг: @game.Raitings
+                            </p>
+                            <a href="#" class="button">резервирай</a>
+                        </div>
+                    </div>
+                </div>
+
+            }
         </div>
     </section>
 
@@ -207,10 +185,21 @@
 @code{
     private List<GameGeneralInfoProjection> GameList;
     private List<GameGeneralInfoProjection> FourPlayersList;
+    private List<GameGeneralInfoProjection> MostRatedGamesList;
+    private List<GameGeneralInfoProjection> RandomGamesList;
+
+    public bool isAdmin;
+    public Random _random = new Random();
     protected override async Task OnInitializedAsync()
     {
         GameList = (await gameService.GetAllGames()).ToList();
         FourPlayersList = GameList.Where(g => g.Difficulty == 4).Take(3).ToList();
+        //MostRatedGamesList = GameList.OrderBy(g => g.Raitings).Take(3).ToList();
+        RandomGamesList = GameList.OrderBy(g => _random.Next()).Where(g => g.Id >= 35).Take(3).ToList();
+
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        isAdmin = user.IsInRole("Admin");
     }
 
     
