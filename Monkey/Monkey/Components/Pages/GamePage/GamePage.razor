@@ -44,7 +44,7 @@
         <div class="game-image-container">
             <img src="@game.Picture" class="game-image" />
             <NavLink class="nav-link" href="catalog">
-                    <button class="action-button" @onclick="() => Return()"><b>Върни</b></button>
+                    <button class="action-button"><b>Върни</b></button>
             </NavLink>
         </div>
         <div class="game-details-container">
@@ -113,4 +113,5 @@
             game = gameService.GetById(Id);
         }
     }
+
 }
