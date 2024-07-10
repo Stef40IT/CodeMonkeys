@@ -5,7 +5,11 @@
 @using Monkey.Core.Services.GameServices
 @using Monkey.Core.Projections
 @using Monkey.Web.ViewModels.Catalog
+@using Microsoft.AspNetCore.Identity
 @inject NavigationManager NavManager
+@inject SignInManager<ApplicationUser> signInManager
+@inject UserManager<ApplicationUser> userManager
+@inject AuthenticationStateProvider AuthenticationStateProvider
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <div class="container-fluid">
         <a class="navbar-brand" href="#">Board Games</a>
@@ -56,6 +60,7 @@
 
 <div class="game-container">
     <div class="game-grid">
+
         @if (GameList == null || !GameList.Any())
         {
             <p>Loading games...</p>
@@ -80,6 +85,10 @@
                                 </svg>
                             </div>
                         </div>
+                        @if(isAdmin)
+                        {
+                            <button @onclick="async () => await Delete(game.Id)">Изтрий</button>
+                        }
                     }
                 </div>
             }
@@ -92,9 +101,15 @@
     private List<GameGeneralInfoProjection> sortedGames;
     private string selectedCriteria;
     private HashSet<int> favoriteGames = new();
+    bool isAdmin;
 
     protected override async Task OnInitializedAsync()
     {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        isAdmin = user.IsInRole("Admin");
+
         GameList = (await gameService.GetAllGames()).Take(20).ToList();
         sortedGames = GameList;
     }
@@ -160,6 +175,12 @@
         {
             favoriteGames.Add(gameId);
         }
+    }
+    private async Task Delete(int id)
+    {
+        gameService.Delete(id);
+        GameList = (await gameService.GetAllGames()).Take(20).ToList();
+        sortedGames = GameList;
     }
 
     private string GetHeartClass(int gameId) => favoriteGames.Contains(gameId) ? "heart-icon filled" : "heart-icon";
