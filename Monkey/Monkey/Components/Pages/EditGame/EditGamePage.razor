@@ -1,4 +1,4 @@
-﻿@page "/game/create"
+﻿@page "/game/edit/{id:int}"
 @using Monkey.Core.Services.GameServices;
 @using Monkey.Web.ViewModels.Game
 @inject AuthenticationStateProvider AuthenticationStateProvider
@@ -7,7 +7,7 @@
 @rendermode InteractiveServer
 <h3>AddGame</h3>
 
-<EditForm method="post" Model="Game" OnValidSubmit="CreateGame" FormName="GameForm">
+<EditForm method="post" Model="Game" OnValidSubmit="UpdateGame" FormName="GameForm">
     <div>
         <label>Заглавие на игра</label>
         <InputText @bind-Value="Game.Name"></InputText>
@@ -55,11 +55,14 @@
         <br />
     </div>
 
-    <button type="submit">Публикувай</button>
+    <button type="submit">Редактирай</button>
     <p role="status">@Message</p>
 </EditForm>
 
 @code {
+    [Parameter]
+    public int Id { get; set; }
+
     [SupplyParameterFromForm(FormName = "GameForm")]
     public GameViewModel Game { get; set; } = new GameViewModel();
 
@@ -67,11 +70,15 @@
 
     protected override async Task OnInitializedAsync()
     {
+        var currentGame = await gameService.GetGameById(Id);
+        Game.Name = currentGame.Name;
+        Game.Description = currentGame.Description;
+        Game.Difficulty = currentGame.Difficulty;
+        Game.Count = currentGame.Count;
+
         var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
         var user = authState.User;
         var isAdmin = user.IsInRole("Admin");
-
-        
 
         if (!isAdmin)
         {
@@ -79,26 +86,37 @@
         }
     }
 
-    public async void CreateGame()
+    public async void UpdateGame()
     {
+        var currentGame = await gameService.GetGameById(Id);
+
         if(loadedFiles == null)
         {
-            Message = "Липсва снимка";
-            return;
+            Game.Picture = currentGame.Picture;
         }
-        var extension = System.IO.Path.GetExtension(loadedFiles.Name);
-        if(extension != ".jpg" && extension != ".png" && extension != ".jpeg")
+        else
         {
-            Message = "Снимката трябва да е .png, .jpg или .jpeg";
-            return;
-        }
-        string path = "/uploadedImages/" + System.Guid.NewGuid() + extension;
-        await using FileStream fs = new("wwwroot" + path, FileMode.Create);
-        await loadedFiles.OpenReadStream().CopyToAsync(fs);
+            var extension = System.IO.Path.GetExtension(loadedFiles.Name);
 
-        Game.Picture = path;
-        gameService.AddGame(Game);
-        Message = "Добавена!";
+            if (extension != ".jpg" && extension != ".png" && extension != ".jpeg")
+            {
+                Message = "Снимката трябва да е .png, .jpg или .jpeg";
+                return;
+            }
+
+            string path = "/uploadedImages/" + System.Guid.NewGuid() + extension;
+            await using FileStream fs = new("wwwroot" + path, FileMode.Create);
+            await loadedFiles.OpenReadStream().CopyToAsync(fs);
+            Game.Picture = path;
+        }
+
+
+
+
+        gameService.UpdateGame(Game, Id);
+        Message = "Редактирана!";
+        await Task.Delay(500);
+        NavigationManager.NavigateTo($"game/{Id}");
     }
 
     public IBrowserFile? loadedFiles { get; set; } = null;
