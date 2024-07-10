@@ -62,7 +62,7 @@
                         </div>
                         @if(isAdmin)
                         {
-                            <button @onclick="() => Delete(game.Id)">Изтрий</button>
+                            <button @onclick="async () => await Delete(game.Id)">Изтрий</button>
                         }
                     }
                 </div>
@@ -151,10 +151,11 @@
             favoriteGames.Add(gameId);
         }
     }
-    private void Delete(int id)
+    private async Task Delete(int id)
     {
         gameService.Delete(id);
-        // You may want to navigate or refresh the data after deletion.
+        GameList = (await gameService.GetAllGames()).Take(20).ToList();
+        sortedGames = GameList;
     }
 
     private string GetHeartClass(int gameId) => favoriteGames.Contains(gameId) ? "heart-icon filled" : "heart-icon";
