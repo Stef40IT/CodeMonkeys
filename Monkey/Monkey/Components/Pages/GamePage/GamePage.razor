@@ -85,6 +85,10 @@
                 <li>
                     <strong>@comment.User.UserName</strong> (@comment.Hour.ToString("g")):
                     <p>@comment.Text</p>
+                    @if(isAdmin)
+                    {
+                        <button @onclick="async () => await Delete(comment)">Изтрий</button>
+                    }
                 </li>
             }
         </ul>
@@ -106,6 +110,7 @@
     [SupplyParameterFromForm(FormName = "commentForm")]
     public Comment Comment { get; set; } = new Comment();
     private string errorMessage;
+    public bool isAdmin;
 
     protected override async Task OnInitializedAsync()
     {
@@ -115,6 +120,8 @@
 
         var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
         var user = authState.User;
+        isAdmin = user.IsInRole("Admin");
+
         if (user.Identity.IsAuthenticated)
         {
             Comment.UserId = user.FindFirst(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
@@ -123,6 +130,12 @@
         {
             Navigation.NavigateTo("/login");
         }
+    }
+
+    private async Task Delete(Comment comment)
+    {
+        await CommentService.DeleteCommentAsync(comment);
+        await LoadComments();
     }
 
     private async Task LoadComments()
