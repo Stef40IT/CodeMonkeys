@@ -10,6 +10,37 @@
 @inject AuthenticationStateProvider AuthenticationStateProvider
 @rendermode InteractiveServer
 
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="#">Board Games</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link" href="/Account/Login">Начало</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/catalog">Каталог</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Статистики</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/contact">Свържи се с нас</a>
+                </li>
+                @if (isAdmin)
+                {
+                    <li class="nav-item">
+                        <a class="nav-link" href="/game/create">Добави игра</a>
+                    </li>
+                }
+            </ul>
+        </div>
+    </div>
+</nav>
+
 <h3>Игра</h3>
 
 @if (game != null)
@@ -21,9 +52,9 @@
         </div>
         <div class="game-image-container">
             <img src="@game.Picture" class="game-image" />
-            <div class="action-buttons">
-                <button class="action-button"><b>Върни</b></button>
-            </div>
+            <NavLink class="nav-link" href="catalog">
+                    @*@<button class="action-button" @onclick="() => Return()"><b>Върни</b></button>*@
+            </NavLink>
         </div>
         <div class="game-details-container">
             <div class="game-details">
@@ -105,6 +136,7 @@
 
     [Parameter]
     public int Id { get; set; }
+    bool isAdmin;
 
     private List<Comment> comments;
     [SupplyParameterFromForm(FormName = "commentForm")]

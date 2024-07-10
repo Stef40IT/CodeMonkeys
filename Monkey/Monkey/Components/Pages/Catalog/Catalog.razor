@@ -5,8 +5,41 @@
 @using Monkey.Core.Services.GameServices
 @using Monkey.Core.Projections
 @using Monkey.Web.ViewModels.Catalog
+@using Microsoft.AspNetCore.Identity
 @inject NavigationManager NavManager
-
+@inject SignInManager<ApplicationUser> signInManager
+@inject UserManager<ApplicationUser> userManager
+@inject AuthenticationStateProvider AuthenticationStateProvider
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="#">Board Games</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link" href="/Account/Login">Начало</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/catalog">Каталог</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Статистики</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/contact">Свържи се с нас</a>
+                </li>
+                @if (isAdmin)
+                {
+                    <li class="nav-item">
+                        <a class="nav-link" href="/game/create">Добави игра</a>
+                    </li>
+                }
+            </ul>
+        </div>
+    </div>
+</nav>
 <PageTitle>Каталог</PageTitle>
 
 <div class="catalog-header">
@@ -30,6 +63,7 @@
 
 <div class="game-container">
     <div class="game-grid">
+
         @if (GameList == null || !GameList.Any())
         {
             <p>Loading games...</p>
@@ -54,6 +88,11 @@
                                 </svg>
                             </div>
                         </div>
+                        @if(isAdmin)
+                        {
+                            <button @onclick="async () => await Delete(game.Id)">Изтрий</button>
+                            <button @onclick="async () => await Update(game.Id)">Редактирай</button>
+                        }
                     }
                 </div>
             }
@@ -66,9 +105,15 @@
     private List<GameGeneralInfoProjection> sortedGames;
     private string selectedCriteria;
     private HashSet<int> favoriteGames = new();
+    bool isAdmin;
 
     protected override async Task OnInitializedAsync()
     {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        isAdmin = user.IsInRole("Admin");
+
         GameList = (await gameService.GetAllGames()).Take(20).ToList();
         sortedGames = GameList;
     }
@@ -134,6 +179,16 @@
         {
             favoriteGames.Add(gameId);
         }
+    }
+    private async Task Delete(int id)
+    {
+        gameService.Delete(id);
+        GameList = (await gameService.GetAllGames()).Take(20).ToList();
+        sortedGames = GameList;
+    }
+    private async Task Update(int id)
+    {
+        NavManager.NavigateTo($"game/edit/{id}");
     }
 
     private string GetHeartClass(int gameId) => favoriteGames.Contains(gameId) ? "heart-icon filled" : "heart-icon";
