@@ -1,0 +1,168 @@
+﻿@page "/admin"
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wishlist Page</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <!-- Header Section -->
+    <header class="bg-dark text-white text-center p-4">
+        My Wishlist
+    </header>
+
+    <!-- Wishlist Items -->
+    <section id="wishlist" class="container mt-5">
+        <div class="row">
+            <div class="col-md-4">
+                <div class="card mb-4">
+                    <img src="image1.jpg" class="card-img-top" alt="Item 1">
+                    <div class="card-body">
+                        <h5 class="card-title">Item 1</h5>
+                        <p class="card-text">Description for Item 1.</p>
+                        <button class="btn btn-primary btn-block">Add to Cart</button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card mb-4">
+                    <img src="image2.jpg" class="card-img-top" alt="Item 2">
+                    <div class="card-body">
+                        <h5 class="card-title">Item 2</h5>
+                        <p class="card-text">Description for Item 2.</p>
+                        <button class="btn btn-primary btn-block">Add to Cart</button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card mb-4">
+                    <img src="image3.jpg" class="card-img-top" alt="Item 3">
+                    <div class="card-body">
+                        <h5 class="card-title">Item 3</h5>
+                        <p class="card-text">Description for Item 3.</p>
+                        <button class="btn btn-primary btn-block">Add to Cart</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Bootstrap & jQuery JS -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
+@* <h1>Welcome to My Wishlist!</h1>
+
+<div class="wishlist">
+    <h3>My Wishlist</h3>
+    <input type="text" @bind="newItemName" placeholder="Enter item" />
+    <button class="btn btn-primary" @onclick="AddItem">Add</button>
+
+    <div class="wishlist-items">
+        @foreach (var item in WishlistItems)
+        {
+            <div class="wishlist-item">
+                <span>@item</span>
+                <button class="btn btn-danger btn-sm" @onclick="() => RemoveItem(item)">Remove</button>
+            </div>
+        }
+    </div>
+</div>
+
+@code {
+    private List<string> WishlistItems = new List<string>();
+    private string newItemName;
+
+    private void AddItem()
+    {
+        if (!string.IsNullOrWhiteSpace(newItemName))
+        {
+            WishlistItems.Add(newItemName);
+            newItemName = string.Empty;
+        }
+    }
+
+    private void RemoveItem(string itemName)
+    {
+        WishlistItems.Remove(itemName);
+    }
+}
+
+<style>
+    /* Inline CSS for component-specific styles */
+    .wishlist {
+        max-width: 400px;
+        margin: 20px auto;
+        padding: 20px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        background-color: #f9f9f9;
+    }
+
+        .wishlist h3 {
+            margin-top: 0;
+            font-size: 1.5rem;
+            color: #333;
+        }
+
+        .wishlist input[type="text"] {
+            padding: 8px;
+            margin-right: 10px;
+            width: 60%;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+    .wishlist-items {
+        margin-top: 10px;
+    }
+
+    .wishlist-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 8px;
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        background-color: #fff;
+    }
+
+        .wishlist-item span {
+            margin-right: 10px;
+        }
+
+    .btn {
+        padding: 6px 12px;
+        font-size: 0.875rem;
+        cursor: pointer;
+        border-radius: 4px;
+    }
+
+    .btn-primary {
+        background-color: #007bff;
+        color: #fff;
+        border: 1px solid #007bff;
+    }
+
+        .btn-primary:hover {
+            background-color: #0056b3;
+            border-color: #0056b3;
+        }
+
+    .btn-danger {
+        background-color: #dc3545;
+        color: #fff;
+        border: 1px solid #dc3545;
+    }
+
+        .btn-danger:hover {
+            background-color: #c82333;
+            border-color: #bd2130;
+        }
+</style>
+ *@

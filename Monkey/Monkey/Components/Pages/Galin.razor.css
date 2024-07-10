@@ -1,0 +1,31 @@
+﻿
+
+header {
+    font-weight: bold;
+}
+
+#wishlist {
+    padding: 40px;
+}
+
+.card {
+    width: 100%;
+}
+
+.card-img-top {
+    height: 200px;
+    object-fit: cover;
+}
+
+.card-title {
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.card-text {
+    font-size: 14px;
+}
+
+.btn-block {
+    margin-top: 10px;
+}
