@@ -116,7 +116,7 @@
         gameService.UpdateGame(Game, Id);
         Message = "Редактирана!";
         await Task.Delay(500);
-        NavigationManager.NavigateTo($"game/{Id}");
+        NavigationManager.NavigateTo("catalog");
     }
 
     public IBrowserFile? loadedFiles { get; set; } = null;
