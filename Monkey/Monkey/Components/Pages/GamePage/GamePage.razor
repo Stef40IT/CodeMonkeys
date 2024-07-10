@@ -41,7 +41,6 @@
     </div>
 </nav>
 
-<h3>Игра</h3>
 
 @if (game != null)
 {
@@ -52,9 +51,7 @@
         </div>
         <div class="game-image-container">
             <img src="@game.Picture" class="game-image" />
-            <NavLink class="nav-link" href="catalog">
-                    @*@<button class="action-button" @onclick="() => Return()"><b>Върни</b></button>*@
-            </NavLink>
+            
         </div>
         <div class="game-details-container">
             <div class="game-details">
@@ -90,20 +87,26 @@
         </div>
     </div>
 
+    <div class="rating">
+        <input type="radio" id="star5" name="rating" value="5" /><label for="star5">&#9733;</label>
+        <input type="radio" id="star4" name="rating" value="4" /><label for="star4">&#9733;</label>
+        <input type="radio" id="star3" name="rating" value="3" /><label for="star3">&#9733;</label>
+        <input type="radio" id="star2" name="rating" value="2" /><label for="star2">&#9733;</label>
+        <input type="radio" id="star1" name="rating" value="1" /><label for="star1">&#9733;</label>
+    </div>
 
-    <h3>Коментари за играта</h3>
 
-    <h4>Добави коментар</h4>
     <EditForm method="post" Model="Comment" OnValidSubmit="HandleValidSubmit" FormName="commentForm">
-        <DataAnnotationsValidator />
-        <ValidationSummary />
+    <DataAnnotationsValidator />
+    <ValidationSummary />
 
-        <input @bind-value="Comment.Text" placeholder="Вашият коментар"></input>
+        <input @bind-value="Comment.Text"placeholder="Вашият коментар" class="comment-input"></input>
 
-        <button type="submit">
-            Добави
-        </button>
-    </EditForm>
+    <button type="submit" class="comment-button">
+            <b>Добави</b>
+    </button>
+</EditForm>
+
     @if (comments == null)
     {
         <p>Зареждане...</p>
@@ -118,7 +121,7 @@
                     <p>@comment.Text</p>
                     @if(isAdmin)
                     {
-                        <button @onclick="async () => await Delete(comment)">Изтрий</button>
+                        <button @onclick="async () => await Delete(comment)" class="deleteButton">Изтрий</button>
                     }
                 </li>
             }

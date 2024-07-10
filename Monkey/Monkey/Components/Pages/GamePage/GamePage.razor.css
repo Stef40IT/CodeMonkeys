@@ -2,7 +2,7 @@
     display: flex;
     align-items: flex-start;
     position: relative;
-    padding-bottom: 50px;
+    margin-top: 70px;
 }
 
 .game-header {
@@ -16,6 +16,7 @@
     font-size: 1.2em;
     z-index: 1;
     border-radius: 4px;
+    
 }
 
 .game-title {
@@ -125,11 +126,110 @@
     .action-button:hover {
         background-color: #007bff;
     }
+.rating {
+    display: inline-block;
+    unicode-bidi: bidi-override;
+    direction: rtl;
+    text-align: center;
+    margin-left: 50px;
+    margin-bottom:50px;
+      margin-top: -30px;
+}
+
+    .rating > input {
+        display: none;
+    }
+
+    .rating > label {
+        display: inline-block;
+        position: relative;
+        width: 40px;
+        height: 40px;
+        font-size: 40px;
+        color: #ccc;
+        cursor: pointer;
+        text-align: center;
+        line-height: 40px;
+    }
+
+        .rating > label::before {
+            content: "\2606";
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            color: #ccc;
+        }
+
+        .rating > input:checked ~ label::before,
+        .rating > label:hover::before,
+        .rating > label:hover ~ label::before {
+            content: "\2605";
+            color: yellow; 
+        }
+
+.comment-input {
+    position: relative;
+    top: -165px; /* Примерна стойност - променете според нуждите */
+    right: -360px; /* Примерна стойност - променете според нуждите */
+    background-color: orange;
+    color: white;
+    border: none;
+    border-radius: 20px;
+    padding: 10px;
+    width: calc(30% - 22px);
+    box-sizing: border-box;
+}
+
+    .comment-input::placeholder {
+        color: white;
+    }
+
+.comment-button {
+    position: relative;
+    right: -360px;
+    top: -165px;
+    background-color: orange;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+    .comment-button:hover,
+    .comment-button:focus {
+        background-color: #007bff;
+        outline: none;
+        transform: scale(1.05);
+    }
+
+    .comment-button:active {
+        transform: scale(0.95);
+    }
+
+.deleteButton {
+    background-color: orange;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
+    margin-left: 0;
+}
+
+    .deleteButton:hover {
+        background-color: #007bff;
+    }
+
 
 @media (max-width: 768px) {
-    .game-details {
-        width: auto;
-        margin-right: 0;
+    .comment-input {
+        width: auto; /* Променете според нуждите на отзивчивостта */
+        position: relative; /* Променете, ако е необходимо за мобилната версия */
+        top: 0; /* Променете според нуждите за мобилната версия */
+        right: 0; /* Променете според нуждите за мобилната версия */
     }
 }
 .navbar {
