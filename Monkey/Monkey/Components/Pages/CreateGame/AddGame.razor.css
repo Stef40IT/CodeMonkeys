@@ -50,12 +50,10 @@
 
 .description {
     display: flex;
-    justify-content: flex-start;
-    padding-left: 25px;
+    justify-content: center;
     height: 100px;
-    align-items: flex-end;
+    align-items: center;
     box-sizing: border-box;
-    padding-bottom: 20px;
     font-size: 36px;
     font-weight: bolder;
 }

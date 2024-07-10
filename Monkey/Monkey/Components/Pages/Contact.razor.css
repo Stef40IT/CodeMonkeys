@@ -23,7 +23,9 @@
 .content {
     padding: 20px;
 }
-
+textrea {
+    width: 250px;
+}
 .container-form {
     display: flex;
     justify-content: flex-start;
@@ -62,8 +64,10 @@
     box-sizing: border-box;
 }
 input, textarea {
-    width:100%;
     font-size:14px;
+}
+input {
+    width: 100%;
 }
 label {
     color: #50555a;
