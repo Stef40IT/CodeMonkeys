@@ -122,9 +122,9 @@ namespace Monkey.Core.Services.GameServices
             if (entity != null)
             {
                 entity.Count -= 1;
-                if (entity.Count == 0 && entity.isBooked == true)
+                if (entity.Count == 0 && entity.isBooked == false)
                 {
-                    entity.isBooked = false;
+                    entity.isBooked = true;
                 }
                 await Repository.GetDb().SaveChangesAsync();
             }
@@ -134,9 +134,9 @@ namespace Monkey.Core.Services.GameServices
             if (entity != null)
             {
                 entity.Count += 1;
-                if (entity.Count > 0 && entity.isBooked == false)
+                if (entity.Count > 0 && entity.isBooked == true)
                 {
-                    entity.isBooked = true;
+                    entity.isBooked = false;
                 }
                 await Repository.GetDb().SaveChangesAsync();
             }

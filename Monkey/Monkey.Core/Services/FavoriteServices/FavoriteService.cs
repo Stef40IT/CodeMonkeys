@@ -25,22 +25,34 @@ namespace Monkey.Core.Services.FavoriteServices
                 .Select(f => f.Game).ToListAsync();
         }
 
-        public async Task AddToFavoritesAsync(string userId, int gameId)
+        public async Task<List<Favorite>> GetFav(string userId)
         {
-            var favorite = new Favorite { UserId = userId, GameId = gameId };
+            return (_context.Favorites.Where(f => f.UserId == userId)).ToList();
+        }
+
+        public async Task AddToFavoritesAsync(Favorite favorite)
+        {
             _context.Favorites.Add(favorite);
             await _context.SaveChangesAsync();
         }
 
-        public async Task RemoveFromFavoritesAsync(string userId, int gameId)
+        public async Task RemoveFromFavoritesAsync(Favorite favorite)
         {
-            var favorite = await _context.Favorites
-                .FirstOrDefaultAsync(f => f.UserId == userId && f.GameId == gameId);
             if (favorite != null)
             {
                 _context.Favorites.Remove(favorite);
                 await _context.SaveChangesAsync();
             }
+        }
+
+        public async Task<bool> Contains(int gameId, string userId)
+        {
+            foreach (Favorite a in _context.Favorites.ToList())
+            {
+                if (a.GameId == gameId && a.UserId == userId) return true;
+            }
+
+            return false;
         }
     }
 
