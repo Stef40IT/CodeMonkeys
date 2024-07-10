@@ -44,6 +44,7 @@
                 <EditForm Model="contactModel" OnValidSubmit="HandleSubmit" FormName="SubmitToGmail">
                     <DataAnnotationsValidator />
                     <ValidationSummary />
+
                     <div class="entry">
                         <label for="name">Име:</label>
                         <InputText id="name" @bind-Value="contactModel.Name" required />

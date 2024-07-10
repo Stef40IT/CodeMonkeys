@@ -1,0 +1,32 @@
+﻿.game-card {
+    border: 1px solid orange;
+    border-radius: 5px;
+    padding: 15px;
+    text-align: center;
+    width: calc(33.33% - 20px);
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.2s ease, outline 0.2s ease;
+}
+
+.game-card:hover {
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+    transform: translateY(-5px);
+    outline: 3px solid blue;
+}
+
+
+.game-info {
+    margin-top: 10px;
+}
+
+.game-name {
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.game-count {
+    margin-top: 5px;
+}
+

@@ -1,9 +1,9 @@
 ﻿@page "/game/create"
-@using Monkey.Core.Services.GameServices;
+@using Monkey.Core.Services.GameServices
 @using Monkey.Web.ViewModels.Game
 @inject AuthenticationStateProvider AuthenticationStateProvider
 @inject NavigationManager NavigationManager
-@inject IGameService gameService;
+@inject IGameService gameService
 @rendermode InteractiveServer
 <h3>AddGame</h3>
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
@@ -101,25 +101,33 @@
         var user = authState.User;
         var isAdmin = user.IsInRole("Admin");
 
-        if (!isAdmin)
-        {
-            NavigationManager.NavigateTo("/");
-        }
+        //if (!isAdmin)
+        //{
+        //NavigationManager.NavigateTo("/");
+        //}
     }
 
     public async void CreateGame()
     {
-        if(loadedFiles == null)
+        if (Game.Difficulty < 1 || Game.Difficulty > 4)
+        {
+            Message = "Трудността трябва да бъде в диапазона от 1 до 4.";
+            return;
+        }
+
+        if (loadedFiles == null)
         {
             Message = "Липсва снимка";
             return;
         }
+
         var extension = System.IO.Path.GetExtension(loadedFiles.Name);
-        if(extension != ".jpg" && extension != ".png" && extension != ".jpeg")
+        if (extension != ".jpg" && extension != ".png" && extension != ".jpeg")
         {
             Message = "Снимката трябва да е .png, .jpg или .jpeg";
             return;
         }
+
         string path = "/uploadedImages/" + System.Guid.NewGuid() + extension;
         await using FileStream fs = new("wwwroot" + path, FileMode.Create);
         await loadedFiles.OpenReadStream().CopyToAsync(fs);
@@ -149,5 +157,4 @@
             isLoading = false;
         }
     }
-
 }
