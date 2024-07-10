@@ -2,6 +2,7 @@
 @using Monkey.Core.Services.GameServices
 @using Monkey.Data;
 @using Monkey.Data.Data.Entities;
+@inject AuthenticationStateProvider AuthenticationStateProvider
 @inject IGameService gameService;
 
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
@@ -13,20 +14,23 @@
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                 <li class="nav-item">
-                    <a class="nav-link" href="#">Начало</a>
+                    <a class="nav-link" href="/Account/Login">Начало</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">Каталог</a>
+                    <a class="nav-link" href="/catalog">Каталог</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="#">Статистики</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">Любими</a>
+                    <a class="nav-link" href="/contact">Свържи се с нас</a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">Свържи се с нас</a>
-                </li>
+                @if (isAdmin)
+                {
+                    <li class="nav-item">
+                        <a class="nav-link" href="/game/create">Добави игра</a>
+                    </li>
+                }
             </ul>
         </div>
     </div>
@@ -105,12 +109,22 @@
 
     [Parameter]
     public int Id { get; set; }
+    bool isAdmin;
 
     protected override async Task OnInitializedAsync()
     {
+
+    
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        isAdmin = user.IsInRole("Admin");
+
+      
         if (game == null)
         {
             game = gameService.GetById(Id);
         }
     }
+
 }
