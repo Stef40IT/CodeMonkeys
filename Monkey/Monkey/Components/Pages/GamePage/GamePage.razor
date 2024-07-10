@@ -10,7 +10,6 @@
 @using Monkey.Core.Projections;
 @using Monkey.Core.Services.UserService
 @using System.Security.Claims
-@inject AuthenticationStateProvider AuthenticationStateProvider
 @inject IGameService gameService;
 @inject IReservationService reservService
 @inject IUserService userService
@@ -20,11 +19,10 @@
 
 <h3>Игра</h3>
 
-@if (game != null)
-{
+
         <div class="game-container">
             <div class="game-header">
-                <div class="game-title">@game.Name</div>
+                <div class="game-title">@gameName</div>
                 <div class="game-info">Сложност: @game.Difficulty | Оставащи: @game.Count</div>
             </div>
             <div class="game-image-container">
@@ -40,57 +38,34 @@
                 <div class="forma">
                     <form>
                         <div class="form-field">
-                            <label for="name">Въведи име:</label>
-                            <input type="text" id="name" name="name" required>
-                        </div>
-                        <div class="form-field">
                             <label for="start-date">Дата от:</label>
-                            <input type="date" id="start-date" name="start-date" required>
+                            <input type="date" id="start-date" name="start-date" required @bind="bookDate">
                         </div>
                         <div class="form-field">
                             <label for="start-time">Час от:</label>
-                            <input type="text" id="start-time" name="start-time" required pattern="[0-9]{1,2}:[0-9]{2}">
+                            <input type="text" id="start-time" name="start-time" required pattern="[0-9]{1,2}:[0-9]{2}" @bind="bookTime">
                         </div>
                         <div class="form-field">
                             <label for="end-date">Дата до:</label>
-                            <input type="date" id="end-date" name="end-date" required>
+                            <input type="date" id="end-date" name="end-date" required @bind="returnDate">
                         </div>
                         <div class="form-field">
                             <label for="end-time">Час до:</label>
-                            <input type="text" id="end-time" name="end-time" required pattern="[0-9]{1,2}:[0-9]{2}">
+                            <input type="text" id="end-time" name="end-time" required pattern="[0-9]{1,2}:[0-9]{2}" @bind="returnTime">
                         </div>
-                        <button type="submit"><b>Запази игра</b></button>
+                        <button type="submit" @onclick="Add"><b>Запази игра</b></button>
                     </form>
                 </div>
-            @if (game.Comments != null)
-            {
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Текст</th>
-                            <th>Час</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var comment in game.Comments)
-                        {
-                            <tr>
-                                <td>@comment.Text</td>
-                                <td>@comment.Hour</td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
-            }
+            </div>
         </div>
-    </div>
-}
 
 
 @code {
     [Parameter]
     public int? Id { get; set; }
     private string gameName;
+    private TimeSpan bookTime;
+    private TimeSpan returnTime;
     private DateTime bookDate = DateTime.Today;
     private DateTime returnDate = DateTime.Today;
     Reservation reserv;
@@ -103,11 +78,11 @@
         {
             gameName = (await gameService.GetGameById(Id)).Name;
         }
-        game = new Game();
+        game = await gameService.GetGameById(Id);
         reserv = new Reservation();
         var authState = await authStateProvider.GetAuthenticationStateAsync();
         var userPrincipal = authState.User;
-        user = await userService.GetById(userPrincipal.FindFirstValue(ClaimTypes.NameIdentifier));
+        user = await UserManager.GetUserAsync(userPrincipal);
     }
 
     private async void Add()
@@ -124,9 +99,8 @@
         if (!game.isBooked && DateTime.Compare(bookDate, returnDate) <= 0)
         {
             reserv.Game = game;
-            reserv.BookDate = bookDate;
-            reserv.ReturnDate = returnDate;
-            reserv.BookDate = bookDate;
+            reserv.BookDate = bookDate + bookTime;
+            reserv.ReturnDate = returnDate + returnTime;
             reserv.User = user;
             reservService.Create(reserv);
             gameService.UpdateCountDown(game.Id);
