@@ -117,9 +117,8 @@ namespace Monkey.Core.Services.GameServices
             return await Repository.GetDb().Games.FirstOrDefaultAsync(g => g.Name == name);
         }
 
-        public async void UpdateCountDown(int id)
+        public async void UpdateCountDown(Game entity)
         {
-            var entity = Repository.GetDb().Games.SingleOrDefault(g => g.Id == id);
             if (entity != null)
             {
                 entity.Count -= 1;
@@ -130,9 +129,8 @@ namespace Monkey.Core.Services.GameServices
                 await Repository.GetDb().SaveChangesAsync();
             }
         }
-        public async void UpdateCountUp(int id)
+        public async void UpdateCountUp(Game entity)
         {
-            var entity = Repository.GetDb().Games.SingleOrDefault(g => g.Id == id);
             if (entity != null)
             {
                 entity.Count += 1;

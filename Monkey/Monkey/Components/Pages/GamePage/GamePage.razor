@@ -1,4 +1,5 @@
 ﻿@page "/game/{id:int}"
+@rendermode InteractiveServer
 @using Monkey.Core.Services.GameServices
 @using Monkey.Data;
 @using Monkey.Data.Data.Entities;
@@ -28,7 +29,7 @@
             <div class="game-image-container">
                 <img src="@game.Picture" class="game-image" />
                 <div class="action-buttons">
-                    <button class="action-button"><b>Върни</b></button>
+                    <button class="action-button" @onclick="Return"><b>Върни</b></button>
                 </div>
             </div>
             <div class="game-details-container">
@@ -71,6 +72,7 @@
     Reservation reserv;
     Game? game;
     ApplicationUser user;
+    string? userId;
 
     protected override async void OnInitialized()
     {
@@ -81,8 +83,8 @@
         game = await gameService.GetGameById(Id);
         reserv = new Reservation();
         var authState = await authStateProvider.GetAuthenticationStateAsync();
-        var userPrincipal = authState.User;
-        user = await UserManager.GetUserAsync(userPrincipal);
+        var User = authState.User;
+        userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
     }
 
     private async void Add()
@@ -95,6 +97,7 @@
         {
             game = await gameService.GetByName(gameName);
         }
+        user = await userService.GetById(userId);
 
         if (!game.isBooked && DateTime.Compare(bookDate, returnDate) <= 0)
         {
@@ -103,7 +106,8 @@
             reserv.ReturnDate = returnDate + returnTime;
             reserv.User = user;
             reservService.Create(reserv);
-            gameService.UpdateCountDown(game.Id);
+            await Task.Delay(100);
+            gameService.UpdateCountDown(game);
 
         }
         else
@@ -115,6 +119,22 @@
         game = new Game();
         reserv = new Reservation();
         user = new ApplicationUser();
+    }
+
+    private async void Return()
+    {
+        List<Reservation> l = reservService.GetReservations(Id, userId);
+        if (reservService.isBooked(ref l, userId, Id))
+        {
+
+            gameService.UpdateCountUp((await gameService.GetGameById(Id)));
+            await Task.Delay(100);
+            reservService.Update(l[0]);
+        }
+        else
+        {
+            new Exception("Cannot return game");
+        }
     }
 }
 
