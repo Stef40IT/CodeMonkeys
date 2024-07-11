@@ -158,7 +158,7 @@ else
 
 @code {
     [Parameter]
-    public int? Id { get; set; }
+    public int Id { get; set; }
     private string gameName;
     private TimeSpan bookTime;
     private TimeSpan returnTime;
@@ -176,7 +176,7 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        if (Id.HasValue)
+        if (Id != null)
         {
             gameName = (await gameService.GetGameById(Id)).Name;
         }
@@ -185,7 +185,7 @@ else
         var authState = await authStateProvider.GetAuthenticationStateAsync();
         var User = authState.User;
         userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        
+        user = await userService.GetById(userId);
 
         await LoadComments();
         
@@ -230,7 +230,7 @@ else
 
     private async Task Add()
     {
-        if (Id.HasValue)
+        if (Id != null)
         {
             game = await gameService.GetGameById(Id);
         }
