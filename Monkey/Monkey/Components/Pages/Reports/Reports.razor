@@ -10,6 +10,9 @@
 @inject IGameService gameService
 @inject AuthenticationStateProvider AuthenticationStateProvider
 @inject NavigationManager NavManager
+
+<PageTitle>Статистика</PageTitle>
+
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <div class="container-fluid">
         <NavLink href="/home" style="text-decoration: none">
@@ -28,9 +31,12 @@
                 <li class="nav-item">
                     <a class="nav-link" href="/catalog">Каталог</a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/reports">Статистики</a>
-                </li>
+                @if (isAdmin)
+                {
+                    <li class="nav-item">
+                        <a class="nav-link" href="/reports">Статистики</a>
+                    </li>
+                }
                 <li class="nav-item">
                     <a class="nav-link" href="/contact">Свържи се с нас</a>
                 </li>
@@ -54,41 +60,52 @@
 }
 else
 {
-    <div class="container">
-        <div class="box1">
-            <h2>Средна Оценка На Всички Игри: @averageRating</h2>
-        </div>
-        <div class="box1">
-            <h2>Общ Брой Свободни Игри: @freeGamesCount</h2>
-        </div>
-        <div class="lists">
-            <h2>Top 5 Most Played Games</h2>
-                @foreach (var game in top5MostPlayed)
-                {
-                    <div class="game-card" @onclick="() => OpenGameDetails(game.Id)">
+    <div class="field">
+        <div class="container">
+            <div class="content">
+                <div class="description">СТАТИСТИКИ</div>
+                <div class="box1">
+                    <h3>Средна Оценка На Всички Игри: @string.Format("{0:f2}", averageRating)/5.00</h3>
+                </div>
+                
+                <div class="box1">
+                    <h3>Общ Брой Свободни Игри: @freeGamesCount/20</h3>
+                </div>
+                <div class="lists">
+                    <h3>Топ 5 Най-Играни Игри:</h3>
+                    <ol class="styled-list">
+                        @foreach (var game in top5MostPlayed)
+                        {
+                            <li>
+                                <div class="game-card" @onclick="() => OpenGameDetails(game.Id)">
 
-                        <div class="game-info">
-                            <div class="game-name">Име на игра: @game.Name</div>
-                            <div class="game-count">Средна оценка: @game.Count</div>
-                        </div>
-                    </div>
-                }
-            
-        </div>
-        <div class="lists">
-            <h2>Top 5 Highest Rated Games</h2>
-            
-                @* @foreach (var game in top5HighestRated)
-                {
-                     <div class="game-card" @onclick="() => OpenGameDetails(game.Id)">
+                                    <div class="game-info">
+                                        <div class="game-name">Име на игра: @game.Name</div>
+                                        <div class="game-count">Играна @game.Count пъти</div>
+                                    </div>
+                                </div>
+                            </li>
+                        }
+                    </ol>
+                </div>
+                <div class="lists">
+                    <h3>Топ 5 най-Високо Оценени Игри</h3>
+                    <ol class="styled-list">
+                        @foreach (var game in top5HighestRated)
+                        {
+                            <li>
+                                 <div class="game-card" @onclick="() => OpenGameDetails(game.Id)">
                             
-                            <div class="game-info">
-                                <div class="game-name">Име на игра: @game.Name</div>
-                                <div class="game-count">Средна оценка: @game.AverageRating</div>
-                            </div>
-                     </div>
-                } *@
-            
+                                        <div class="game-info">
+                                            <div class="game-name">Име на игра: @game.Name</div>
+                                            <div class="game-count">Средна оценка: @string.Format("{0:f2}", game.AverageRating)</div>
+                                        </div>
+                                 </div>
+                            </li>
+                        }
+                    </ol>
+                </div> 
+            </div>
         </div>
     </div>
 }
@@ -114,10 +131,10 @@ else
             }
             GameList = (await gameService.GetAllGames()).ToList();
 
-            //averageRating = GameList.Where(g => g.Raitings.Any()).Average(g => g.Raitings.Average(r => r.Rate));
+            averageRating = GameList.Where(g => g.Raitings.Any()).Average(g => g.Raitings.Average(r => r.Rate));
             freeGamesCount = GameList.Count(g => !g.isBooked);
             top5MostPlayed = GameList.OrderByDescending(g => g.Count).Take(5).Select(g => (g.Name, g.Count, g.Id)).ToList();
-            //top5HighestRated = GameList.Where(g => g.Raitings.Any()).OrderByDescending(g => g.Raitings.Average(r => r.Rate)).Take(5).Select(g => (g.Name, g.Raitings.Average(r => r.Rate), g.Id)).ToList();
+            top5HighestRated = GameList.Where(g => g.Raitings.Any()).OrderByDescending(g => g.Raitings.Average(r => r.Rate)).Take(5).Select(g => (g.Name, g.Raitings.Average(r => r.Rate), g.Id)).ToList();
 
             loading = false;
         

@@ -230,7 +230,6 @@ h1 {
     font-size: 1.9rem;
     font-weight: bold;
     color: #084eec;
-    cursor:pointer;
 }
 
 .navbar-toggler {
@@ -256,7 +255,7 @@ h1 {
 
 ul {
     align-content: flex-end;
-    
+    cursor: pointer;
 }
 
 
