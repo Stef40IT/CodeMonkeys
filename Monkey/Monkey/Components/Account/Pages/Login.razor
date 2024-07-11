@@ -4,6 +4,7 @@
 @using Microsoft.AspNetCore.Identity
 @using Monkey.Data
 @using Monkey.Data.Data.Entities
+@inject AuthenticationStateProvider AuthenticationStateProvider
 @inject SignInManager<ApplicationUser> SignInManager
 @inject ILogger<Login> Logger
 @inject NavigationManager NavigationManager
@@ -72,6 +73,14 @@
 
     protected override async Task OnInitializedAsync()
     {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        if(user.Identity.IsAuthenticated)
+        {
+            NavigationManager.NavigateTo("home");
+        }
+
         if (HttpMethods.IsGet(HttpContext.Request.Method))
         {
             // Clear the existing external cookie to ensure a clean login process

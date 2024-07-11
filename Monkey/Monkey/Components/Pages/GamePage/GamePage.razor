@@ -55,6 +55,9 @@
                         <a class="nav-link" href="/game/create">Добави игра</a>
                     </li>
                 }
+                <li class="nav-item">
+                    <a class="nav-link" @onclick="SignOut">Излез</a>
+                </li>
             </ul>
         </div>
     </div>
@@ -190,6 +193,11 @@ else
         {
             NavManager.NavigateTo("/login");
         }
+    }
+
+    private void SignOut()
+    {
+        NavManager.NavigateTo("logout");
     }
 
     private async Task Delete(Comment comment)
