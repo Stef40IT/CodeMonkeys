@@ -204,7 +204,7 @@
     }
     private string AverageRating(ICollection<Rating> ratings) 
     {
-        if (ratings.Count() != 0) return $"Рейтинг: {ratings.Average(r => r.Rate):f2} ⭐";
+        if (ratings.Count() != 0) return $"Рейтинг: {ratings.Average(r => r.Rate):f2}";
         else return "Играта няма рейтинг";
     }
     private double AverageRatings(ICollection<Rating> ratings)
