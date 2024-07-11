@@ -253,6 +253,7 @@ h1 {
 
 ul {
     align-content: flex-end;
+    cursor: pointer;
 }
 
 

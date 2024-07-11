@@ -2,7 +2,7 @@
 @using Monkey.Core.Services.GameServices
 @using Monkey.Web.ViewModels.Game
 @inject AuthenticationStateProvider AuthenticationStateProvider
-@inject NavigationManager NavigationManager
+@inject NavigationManager NavManager
 @inject IGameService gameService
 @rendermode InteractiveServer
 
@@ -35,6 +35,9 @@
                         <a class="nav-link" href="/game/create">Добави игра</a>
                     </li>
                 }
+                <li class="nav-item">
+                    <a class="nav-link" @onclick="SignOut">Излез</a>
+                </li>
             </ul>
         </div>
     </div>
@@ -134,12 +137,17 @@
 
         if (!user.Identity.IsAuthenticated)
         {
-            NavigationManager.NavigateTo("/");
+            NavManager.NavigateTo("/");
         }
         else if(!isAdmin)
         {
-            NavigationManager.NavigateTo("home");
+            NavManager.NavigateTo("home");
         }
+    }
+
+    private void SignOut()
+    {
+        NavManager.NavigateTo("logout");
     }
 
     public async void CreateGame()

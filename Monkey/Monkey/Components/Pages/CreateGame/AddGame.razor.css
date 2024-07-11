@@ -202,6 +202,7 @@ button {
 
 ul {
     align-content: flex-end;
+    cursor: pointer;
 }
 
 
