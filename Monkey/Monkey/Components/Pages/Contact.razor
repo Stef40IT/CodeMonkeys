@@ -147,17 +147,17 @@
 
     public class ContactModel
     {
-        [Required(ErrorMessage = "Name is required")]
+        [Required(ErrorMessage = "Името е задължително")]
         public string Name { get; set; }
 
-        [Required(ErrorMessage = "Email is required")]
-        [EmailAddress(ErrorMessage = "Invalid email address")]
+        [Required(ErrorMessage = "Имейлът е задължителен")]
+        [EmailAddress(ErrorMessage = "невалиден имейл, тъпак")]
         public string Email { get; set; }
 
-        [Required(ErrorMessage = "Subject is required")]
+        [Required(ErrorMessage = "Тамата е задължителна")]
         public string Subject { get; set; }
 
-        [Required(ErrorMessage = "Message is required")]
+        [Required(ErrorMessage = "Съдържанието е задължително")]
         public string Message { get; set; }
     }
 }
