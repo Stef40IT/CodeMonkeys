@@ -134,14 +134,10 @@
         var user = authState.User;
 
         isAdmin = user.IsInRole("Admin");
-
-
         GameList = (await gameService.GetAllGames()).Take(20).ToList();
         sortedGames = GameList;
-        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-        var userPrin = authState.User;
-        CurUserId = userPrin.FindFirstValue(ClaimTypes.NameIdentifier);
-        user = await UserManager.GetUserAsync(userPrin);
+        CurUserId = user.FindFirstValue(ClaimTypes.NameIdentifier);
+        
         Game = new Game();
         fav = new Favorite();
         favoriteList = await favoriteService.GetFav(CurUserId);
@@ -198,11 +194,7 @@
     private void OpenGameDetails(int gameId) => NavManager.NavigateTo($"/game/{gameId}");
     private void SendToHome() => NavManager.NavigateTo($"/home");
 
-    private double AverageRating(ICollection<Rating> ratings) 
-    {
-        if (ratings.Count() != 0) return ratings.Average(r => r.Rate);
-        else return 0;
-    }
+    private double AverageRating(ICollection<Rating> ratings) => ratings.Average(r => r.Rate);
 
     private async void ToggleFavorite(int gameId)
     {
