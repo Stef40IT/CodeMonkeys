@@ -1,15 +1,18 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Monkey.Data;
 using Monkey.Data.Data.Entities;
+using Monkey.Data.Data.Repositories;
+using Monkey.Web.ViewModels.Game;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Monkey.Data.Data.Repositories;
 
 namespace Monkey.Core.Services.Ratings
 {
-    public class RatingService:IRatingService
+    public class RatingService : IRatingService
     {
         private readonly ApplicationDbContext _context;
 
@@ -30,6 +33,11 @@ namespace Monkey.Core.Services.Ratings
         public async Task<List<Rating>> GetRatingsByGameAsync(int gameId)
         {
             return await _context.Ratings.Where(r => r.GameId == gameId).ToListAsync();
+        }
+        public async Task UpdateRatingAsync(Rating rating)
+        {
+            _context.Ratings.Update(rating);
+            await _context.SaveChangesAsync();
         }
     }
 }

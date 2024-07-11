@@ -102,11 +102,11 @@
 </div>
 
 <div class="rating">
-    <input type="radio" id="star5" name="rating" @onclick="() => RateValue(5)" value="5" /><label for="star5">&#9733;</label>
-    <input type="radio" id="star4" name="rating" @onclick="() => RateValue(4)" value="4" /><label for="star4">&#9733;</label>
-    <input type="radio" id="star3" name="rating" @onclick="() => RateValue(3)" value="3" /><label for="star3">&#9733;</label>
-    <input type="radio" id="star2" name="rating" @onclick="() => RateValue(2)" value="2" /><label for="star2">&#9733;</label>
-    <input type="radio" id="star1" name="rating" @onclick="() => RateValue(1)" value="1" /><label for="star1">&#9733;</label>
+    <input type="radio" id="star5" name="rating" @onclick="() => RateValue(5)" value="5" checked="@(ratingValue == 5)" /><label for="star5">&#9733;</label>
+    <input type="radio" id="star4" name="rating" @onclick="() => RateValue(4)" value="4" checked="@(ratingValue == 4)" /><label for="star4">&#9733;</label>
+    <input type="radio" id="star3" name="rating" @onclick="() => RateValue(3)" value="3" checked="@(ratingValue == 3)" /><label for="star3">&#9733;</label>
+    <input type="radio" id="star2" name="rating" @onclick="() => RateValue(2)" value="2" checked="@(ratingValue == 2)" /><label for="star2">&#9733;</label>
+    <input type="radio" id="star1" name="rating" @onclick="() => RateValue(1)" value="1" checked="@(ratingValue == 1)" /><label for="star1">&#9733;</label>
 </div>
 
 <EditForm method="post" Model="Comment" OnValidSubmit="HandleValidSubmit" FormName="commentForm">
@@ -191,6 +191,11 @@ else
         {
             NavManager.NavigateTo("/");
         }
+        var rating = await ratingService.GetRatingByUserAndGameAsync(userId, Id);
+        if (rating != null)
+        {
+            ratingValue = rating.Rate;
+        }
     }
 
     private void SignOut()
@@ -225,7 +230,7 @@ else
         {
             await Rate(ratingValue);
         }
-        
+
         NavManager.NavigateTo($"game/{Id}", forceLoad: true);
     }
 
@@ -250,6 +255,7 @@ else
             await Task.Delay(100);
             await gameService.UpdateCountDown(game);
             bookGame = "Запазена!";
+            returnGame = "Върни игра";
         }
         else
         {
@@ -266,6 +272,8 @@ else
         List<Reservation> l = reservService.GetReservations(Id, userId);
         if (reservService.isBooked(ref l, userId, Id))
         {
+                        returnGame = "Върната!";
+                        bookGame = "Запази игра";
             gameService.UpdateCountUp((await gameService.GetGameById(Id)));
             await Task.Delay(100);
             reservService.Update(l[0]);
@@ -291,7 +299,6 @@ else
                         await smtpClient.AuthenticateAsync("boardgamesrentalsinc@gmail.com", "rbwy tbxd miws uptl");
                         await smtpClient.SendAsync(mailMessage);
                         await smtpClient.DisconnectAsync(true);
-                        returnGame = "Върната!";
                     }
                 }
                 else
@@ -322,10 +329,12 @@ else
                     Rate = value
                 };
             await ratingService.AddRatingAsync(rating);
+            
         }
         else
         {
-            throw new Exception("Already existing rating.");
+            existingRating.Rate = value;
+            ratingService.UpdateRatingAsync(existingRating);
         }
     }
     private async void RateValue(int values)
