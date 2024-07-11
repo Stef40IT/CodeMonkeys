@@ -10,6 +10,18 @@
 @inject SignInManager<ApplicationUser> signInManager
 @inject UserManager<ApplicationUser> userManager
 @inject AuthenticationStateProvider AuthenticationStateProvider
+<!DOCTYPE html>
+<html lang="en">
+@* <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Website Main Page</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+
+
+</head> *@
+<body>
 
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <div class="container-fluid">
@@ -22,9 +34,10 @@
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
 
-                <li class="nav-item">
-                    <a class="nav-link" href="/home">Начало</a>
-                </li>
+                    <li class="nav-item">
+                            <a class="nav-link" href="/home">Начало</a>
+                        
+                    </li>
 
                 <li class="nav-item">
                     <a class="nav-link" href="/catalog">Каталог</a>
@@ -41,11 +54,13 @@
                         <a class="nav-link" href="/game/create">Добави игра</a>
                     </li>
                 }
+                    <li class="nav-item">
+                        <a class="nav-link" href="logout">Излез</a>
+                    </li>
             </ul>
         </div>
     </div>
 </nav>
-
     <section id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
         <ol class="carousel-indicators">
             <li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
@@ -161,7 +176,8 @@
    @*  <scriptsrc="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min. js"></script> *@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
-    
+    </body>
+    </html>
 @inject IGameService gameService;
 @code{
     private List<GameGeneralInfoProjection> GameList;
@@ -192,6 +208,10 @@
     {
         if (ratings.Count() != 0) return ratings.Average(r => r.Rate);
         else return 0 ;
+    }
+    private void SignOut()
+    {
+        NavManager.NavigateTo("logout");
     }
     
 }
