@@ -1,13 +1,23 @@
-﻿.game-card {
+﻿﻿@font-face {
+    font-family: "norse bold";
+}
+
+.game-card {
     border: 1px solid orange;
     border-radius: 5px;
     padding: 15px;
     text-align: center;
-    width: calc(33.33% - 20px);
+    width: 250px;
     cursor: pointer;
     position: relative;
     overflow: hidden;
     transition: transform 0.2s ease, outline 0.2s ease;
+}
+
+h3 {
+    display: flex;
+    align-content: center;
+    justify-content: center;
 }
 
 .game-card:hover {
@@ -16,6 +26,37 @@
     outline: 3px solid blue;
 }
 
+ol.styled-list {
+    counter-reset: item;
+    list-style-type: none;
+    padding-left: 0;
+    margin-left: 0;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+}
+.lists {
+    margin-top: 20px;
+}
+
+    ol.styled-list li {
+        counter-increment: item;
+        margin-bottom: 10px;
+        padding-left: 20px;
+        margin-right: 30px;
+        margin-top: 20px;
+        position: relative;
+    }
+
+        ol.styled-list li::before {
+            content: counter(item) ".";
+            position: absolute;
+            left: 0;
+            font-weight: bold;
+            color: #2c3e50;
+        }
 
 .game-info {
     margin-top: 10px;
@@ -30,3 +71,38 @@
     margin-top: 5px;
 }
 
+.field {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.container {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    max-width: 1000px;
+    margin: 20px;
+}
+
+.content {
+    padding: 20px;
+}
+
+.description {
+    display: flex;
+    justify-content: center;
+    height: 100px;
+    align-items: center;
+    box-sizing: border-box;
+    padding-bottom: 20px;
+    font-size: 30px;
+    font-weight: bolder;
+}
