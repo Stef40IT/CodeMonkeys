@@ -107,9 +107,13 @@
         var user = authState.User;
         var isAdmin = user.IsInRole("Admin");
 
-        if (!isAdmin)
+        if (!user.Identity.IsAuthenticated)
         {
-            NavigationManager.NavigateTo("/home");
+            NavigationManager.NavigateTo("/");
+        }
+        else if (!isAdmin)
+        {
+            NavigationManager.NavigateTo("home");
         }
     }
 

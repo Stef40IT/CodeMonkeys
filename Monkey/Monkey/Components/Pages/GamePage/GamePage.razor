@@ -36,15 +36,13 @@
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                 <li class="nav-item">
-                    <NavLink href="/home" style="text-decoration: none">
-                        <a class="nav-link">Начало</a>
-                    </NavLink>
+                    <a class="nav-link" href="/home">Начало</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="/catalog">Каталог</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">Статистики</a>
+                    <a class="nav-link" href="/reports">Статистики</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="/contact">Свържи се с нас</a>
@@ -55,6 +53,9 @@
                         <a class="nav-link" href="/game/create">Добави игра</a>
                     </li>
                 }
+                <li class="nav-item">
+                    <a class="nav-link" @onclick="SignOut">Излез</a>
+                </li>
             </ul>
         </div>
     </div>
@@ -190,6 +191,11 @@ else
         {
             NavManager.NavigateTo("/login");
         }
+    }
+
+    private void SignOut()
+    {
+        NavManager.NavigateTo("logout");
     }
 
     private async Task Delete(Comment comment)

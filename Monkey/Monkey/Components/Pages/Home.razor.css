@@ -19,6 +19,7 @@
 .carousel-item {
     position: relative;
     height: 100%; /* Ensures the item takes up the full height of the carousel */
+    
 }
 
     .carousel-item::before {
@@ -37,6 +38,7 @@
         height: 100%;
         object-fit: cover;
     }
+    
 
 .carousel-caption {
     position: absolute;
@@ -46,6 +48,8 @@
     z-index: 2; /* Ensure the text is above the overlay */
     color: white; /* White text color */
     text-align: center;
+    font-size: 50px;
+    
 }
 
 
