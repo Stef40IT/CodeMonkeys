@@ -1,12 +1,21 @@
-﻿@page "/catalog"
+@page "/catalog"
 @rendermode InteractiveServer
 @using Monkey.Core.Projections.Games
 @using Monkey.Data.Data.Entities
 @using Monkey.Core.Services.GameServices
+@using Monkey.Core.Services.UserService
+@using Monkey.Core.Services.FavoriteServices
 @using Monkey.Core.Projections
+@using System.Linq
 @using Monkey.Web.ViewModels.Catalog
 @using Microsoft.AspNetCore.Identity
 @inject NavigationManager NavManager
+@inject IGameService gameService
+@inject IFavoriteService favoriteService
+@inject IUserService userService
+@using System.Security.Claims
+@using Microsoft.AspNetCore.Identity
+@inject AuthenticationStateProvider AuthenticationStateProvider
 @inject SignInManager<ApplicationUser> signInManager
 @inject UserManager<ApplicationUser> userManager
 @inject AuthenticationStateProvider AuthenticationStateProvider
@@ -57,10 +66,11 @@
             <option value="">Избери критерия</option>
             <option value="Name">Име(А-Я)</option>
             <option value="Name(Descending)">Име(Я-А)</option>
-            <option value="Difficulty">Сложност(1-4)</option>
-            <option value="DifficultyDescending">Сложност(4-1)</option>
+            <option value="Difficulty">Брой играчи(1-4)</option>
+            <option value="DifficultyDescending">Брой играчи(4-1)</option>
             <option value="Rating">Оценка</option>
             <option value="Count">Налични</option>
+            <option value="Favorites">Любими</option>
         </select>
     </div>
 </div>
@@ -83,11 +93,11 @@
                             <img src="@game.Picture" alt="@game.Name" class="game-image" />
                             <div class="game-info">
                                 <div class="game-name">@game.Name</div>
-                                <div class="game-count">Available: @game.Count</div>
-                                <div class="game-difficulty">Difficulty: @game.Difficulty</div>
+                                <div class="game-count">Налични бройки: @game.Count</div>
+                                <div class="game-difficulty">Брой играчи: @game.Difficulty</div>
                             </div>
                             <div class="favorite-icon">
-                                <svg viewBox="0 0 24 24" width="24" height="24" class="@GetHeartClass(game.Id)" @onclick="() => ToggleFavorite(game.Id)">
+                                <svg viewBox="0 0 24 24" width="24" height="24" class="@GetHeartClass(game.Id).Result" @onclick:stopPropagation @onclick="async () => await ToggleFavorite(game.Id)">
                                     <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41 0.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
                                 </svg>
                             </div>
@@ -107,19 +117,28 @@
 @code {
     private List<GameGeneralInfoProjection> GameList;
     private List<GameGeneralInfoProjection> sortedGames;
+    private List<Favorite> favoriteList;
+    private List<GameGeneralInfoProjection> favoriteGamesList;
     private string selectedCriteria;
-    private HashSet<int> favoriteGames = new();
+
+    private string CurrentUserId;
+    private ApplicationUser user;
+
     bool isAdmin;
 
     protected override async Task OnInitializedAsync()
     {
-        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-        var user = authState.User;
-
-        isAdmin = user.IsInRole("Admin");
-
         GameList = (await gameService.GetAllGames()).Take(20).ToList();
         sortedGames = GameList;
+
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var userPrin = authState.User;
+        CurrentUserId = userPrin.FindFirstValue(ClaimTypes.NameIdentifier);
+        favoriteList = await favoriteService.GetFav(CurrentUserId);
+        favoriteGamesList = await favoriteService.GetFavProj(CurrentUserId);
+        user = await userManager.GetUserAsync(userPrin);
+        isAdmin = userPrin.IsInRole("Admin");
+ 
     }
 
     private string SelectedCriteria
@@ -132,7 +151,7 @@
         }
     }
 
-    private void OnCriteriaChanged()
+    private async void OnCriteriaChanged()
     {
         if (string.IsNullOrEmpty(selectedCriteria))
         {
@@ -160,30 +179,39 @@
             case "Count":
                 sortedGames = GameList.OrderByDescending(g => g.Count).ToList();
                 break;
+            case "Favorites":
+                sortedGames = favoriteGamesList;
+                break;
             default:
                 sortedGames = GameList;
                 break;
         }
     }
 
-    [Inject]
-    private IGameService gameService { get; set; }
-
     private void OpenGameDetails(int gameId) => NavManager.NavigateTo($"/game/{gameId}");
     private void SendToHome() => NavManager.NavigateTo($"/home");
 
-    private double AverageRating(ICollection<Rating> ratings) => ratings.Average(r => r.Rate);
-
-    private void ToggleFavorite(int gameId)
+    private double AverageRating(ICollection<Rating> ratings)
     {
-        if (favoriteGames.Contains(gameId))
+        if (ratings.Count() != 0) return ratings.Average(r => r.Rate);
+        else return 0;
+    }
+
+    private async Task ToggleFavorite(int gameId)
+    {
+        if (favoriteService.Contains(gameId, CurrentUserId).Result)
         {
-            favoriteGames.Remove(gameId);
+            
+            
+            await favoriteService.RemoveFromFavoritesAsync(CurrentUserId, gameId);
+            favoriteList = await favoriteService.GetFav(CurrentUserId);
         }
         else
         {
-            favoriteGames.Add(gameId);
+            await favoriteService.AddToFavoritesAsync(CurrentUserId, gameId);
+            favoriteList = await favoriteService.GetFav(CurrentUserId);
         }
+        favoriteGamesList = await favoriteService.GetFavProj(CurrentUserId);
     }
     private async Task Delete(int id)
     {
@@ -196,5 +224,16 @@
         NavManager.NavigateTo($"game/edit/{id}");
     }
 
-    private string GetHeartClass(int gameId) => favoriteGames.Contains(gameId) ? "heart-icon filled" : "heart-icon";
+    private async Task<string> GetHeartClass(int gameId) 
+    { 
+        foreach(Favorite f in favoriteList)
+        {
+            if(f.GameId == gameId)
+            {
+                return "heart-icon filled";
+            }
+        }
+
+        return "heart-icon";
+    }
 }

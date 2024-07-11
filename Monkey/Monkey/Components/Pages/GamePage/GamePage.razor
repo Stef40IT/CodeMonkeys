@@ -68,7 +68,7 @@
     <div class="game-image-container">
         <img src="@game.Picture" class="game-image" />
         <div class="action-buttons">
-            <button class="action-button" @onclick="Return"><b>Върни</b></button>
+            <button class="action-button" @onclick="Return"><b>@returnGame</b></button>
         </div>
     </div>
     <div class="game-details-container">
@@ -93,25 +93,12 @@
                     <label for="end-time">Час до:</label>
                     <input type="datetime" id="end-time" name="end-time" required pattern="[0-9]{1,2}:[0-9]{2}" @bind="returnTime">
                 </div>
-                <button type="submit" @onclick="Add"><b>Запази игра</b></button>
+                <button type="submit" @onclick="Add"><b>@bookGame</b></button>
+                
             </form>
         </div>
     </div>
 </div>
-@if (game.Comments != null)
-{
-    <table>
-        <thead>
-        <td>Text</td>
-        <td>Hour</td>
-        </thead>
-        @foreach (var commnet in game?.Comments)
-        {
-            <td>@commnet.Text</td>
-            <td>@commnet.Hour</td>
-        }
-    </table>
-}
 
 <div class="rating">
     <input type="radio" id="star5" name="rating" @onclick="() => RateValue(5)" value="5" /><label for="star5">&#9733;</label>
@@ -175,8 +162,11 @@ else
     public Comment Comment { get; set; } = new Comment();
     private string errorMessage;
     public bool isAdmin;
+
     Rating? rating;
     private int ratingValue;
+    private string bookGame = "Запази игра";
+    private string returnGame = "Върни игра";
 
     protected override async Task OnInitializedAsync()
     {
@@ -230,6 +220,7 @@ else
             await Rate(ratingValue);
         }
         
+        NavManager.NavigateTo($"game/{Id}", forceLoad: true);
     }
 
     private async Task Add()
@@ -252,12 +243,16 @@ else
             reservService.Create(reserv);
             await Task.Delay(100);
             await gameService.UpdateCountDown(game);
+            bookGame = "Запазена!";
         }
         else
         {
             throw new Exception("Играта не е в наличност");
         }
+
+
         reserv = new Reservation();
+
     }
 
     private async void Return()
@@ -290,6 +285,7 @@ else
                         await smtpClient.AuthenticateAsync("boardgamesrentalsinc@gmail.com", "rbwy tbxd miws uptl");
                         await smtpClient.SendAsync(mailMessage);
                         await smtpClient.DisconnectAsync(true);
+                        returnGame = "Върната!";
                     }
                 }
                 else
@@ -307,6 +303,7 @@ else
             new Exception("Cannot return game");
         }
     }
+
     private async Task Rate(int value)
     {
         var existingRating = await ratingService.GetRatingByUserAndGameAsync(user.Id, game.Id);
@@ -330,3 +327,6 @@ else
         ratingValue = values;
     }
 }
+
+}
+

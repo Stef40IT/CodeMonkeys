@@ -25,6 +25,11 @@ namespace Monkey.Core.Services.FavoriteServices
                 .Select(f => f.Game).ToListAsync();
         }
 
+        public async Task<List<Favorite>> GetFav(string userId)
+        {
+            return (_context.Favorites.Where(f => f.UserId == userId)).ToList();
+        }
+
         public async Task AddToFavoritesAsync(string userId, int gameId)
         {
             var favorite = new Favorite { UserId = userId, GameId = gameId };
@@ -41,6 +46,43 @@ namespace Monkey.Core.Services.FavoriteServices
                 _context.Favorites.Remove(favorite);
                 await _context.SaveChangesAsync();
             }
+        }
+
+        public async Task<List<GameGeneralInfoProjection>> GetFavProj(string userId)
+        {
+            var favoriteList = _context.Favorites.Where(f => f.UserId == userId).Select(f => f.Game).ToList();
+            var result = new List<GameGeneralInfoProjection>();
+            foreach (Game f in favoriteList)
+            {
+                GameGeneralInfoProjection favGame = new GameGeneralInfoProjection
+                {
+                    Id = f.Id,
+                    Name = f.Name,
+                    Description = f.Description,
+                    Picture = f.Picture,
+                    Difficulty = f.Difficulty,
+                    Count = f.Count,
+                    Comments = f.Comments,
+                    Raitings = f.Raitings,
+                    Reservations = f.Reservations,
+                    isBooked = f.isBooked
+                };
+                result.Add(favGame);
+            }
+
+            return result;
+        }
+
+        
+
+        public async Task<bool> Contains(int gameId, string userId)
+        {
+            foreach (Favorite a in _context.Favorites.ToList())
+            {
+                if (a.GameId == gameId && a.UserId == userId) return true;
+            }
+
+            return false;
         }
     }
 
