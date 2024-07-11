@@ -72,22 +72,20 @@
             <div class="carousel-item active">
                 <img src="/hp_img/bg1.jpg" class="d-block w-100" alt="Slide 1">
                 <div class="carousel-caption">
-                    <h5>Slide 1 Title</h5>
-                    <p>Some description for slide 1</p>
+                    <h2><b>Хвърли заровете, промени съдбата си!</b></h2>
+                    
                 </div>
             </div>
             <div class="carousel-item">
                 <img src="/hp_img/bg2.jpg" class="d-block w-100" alt="Slide 2">
                 <div class="carousel-caption">
-                    <h5>Slide 2 Title</h5>
-                    <p>Some description for slide 2</p>
+                    <h2><b>Завладей дъската, управлявай играта!</b></h2>
                 </div>
             </div>
             <div class="carousel-item">
                 <img src="/hp_img/bg3.jpg" class="d-block w-100" alt="Slide 3">
                 <div class="carousel-caption">
-                    <h5>Slide 3 Title</h5>
-                    <p>Some description for slide 3</p>
+                    <h2><b>99% от колегите се отказват преди да ударят големия jackpot!</b></h2>
                 </div>
             </div>
         </div>
@@ -109,7 +107,7 @@
 
         <h1><strong>Игри с най-висок рейтинг</strong></h1>
         <div class="card-container">
-            @foreach (var game in FourPlayersList)
+            @foreach (var game in MostRatedGamesList)
             {
                 <div class="col-md-4">
                     <div class="card" style="background-image: url('@game.Picture'); background-size: 100%;background-repeat: no-repeat;">
@@ -194,7 +192,7 @@
     {
         GameList = (await gameService.GetAllGames()).ToList();
         FourPlayersList = GameList.Where(g => g.Difficulty == 4).Take(3).ToList();
-        //MostRatedGamesList = GameList.OrderBy(g => g.Raitings).Take(3).ToList();
+        MostRatedGamesList = GameList.OrderByDescending(g => AverageRatings(g.Raitings)).Take(3).ToList();
         RandomGamesList = GameList.OrderBy(g => _random.Next()).Where(g => g.Id >= 35).Take(3).ToList();
 
         var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
@@ -204,8 +202,13 @@
     }
     private string AverageRating(ICollection<Rating> ratings) 
     {
-        if (ratings.Count() != 0) return $"Рейтинг: {ratings.Average(r => r.Rate)} ⭐";
+        if (ratings.Count() != 0) return $"Рейтинг: {ratings.Average(r => r.Rate):f2} ⭐";
         else return "Играта няма рейтинг";
+    }
+    private double AverageRatings(ICollection<Rating> ratings)
+    {
+        if (ratings.Count() != 0) return ratings.Average(r => r.Rate);
+        else return 0 ;
     }
     
 }
