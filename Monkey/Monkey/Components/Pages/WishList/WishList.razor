@@ -56,7 +56,7 @@ else
         var userId = await GetUserId();
         if (!string.IsNullOrEmpty(userId))
         {
-            await FavoriteService.RemoveFromFavoritesAsync(userId, gameId);
+            // await FavoriteService.RemoveFromFavoritesAsync(userId, gameId);
             games = await FavoriteService.GetFavoriteGamesAsync(userId);
         }
     }
