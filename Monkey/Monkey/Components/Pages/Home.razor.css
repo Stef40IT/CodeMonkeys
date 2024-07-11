@@ -109,24 +109,13 @@ h1 {
     color: var(--clr-neutral-100);
     background-position: center;
     padding: 10rem 0 0;
-    max-width: 33ch;
+    max-width: 37ch;
     max-height: 69ch;
     border-radius: 1rem;
     overflow: hidden;
     transition: transform 500ms ease;
 }
 
-
-
-.card2 {
-    background-image: url(img/seafarers.png);
-    background-size: cover;
-}
-
-.card3 {
-    background-image: url(img/explorers.png);
-    background-size: cover;
-}
 
 .card:hover,
 .card:focus-within {
