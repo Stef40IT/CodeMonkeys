@@ -81,7 +81,7 @@
                 </div>
                 <div class="form-field">
                     <label for="start-time">Час от:</label>
-                    <input type="datetime" id="start-time" name="start-time" required pattern="[0-9]{1,2}:[0-9]{2}" @bind="bookTime">
+                    <input type="datetime" id="start-time" name="start-time" required pattern="[0-9]{1,2}:[0-9]{2}:[0-9]{2}" @bind="bookTime">
                 </div>
                 <div class="form-field">
                     <label for="end-date">Дата до:</label>
@@ -89,7 +89,7 @@
                 </div>
                 <div class="form-field">
                     <label for="end-time">Час до:</label>
-                    <input type="datetime" id="end-time" name="end-time" required pattern="[0-9]{1,2}:[0-9]{2}" @bind="returnTime">
+                    <input type="datetime" id="end-time" name="end-time" required pattern="[0-9]{1,2}:[0-9]{2}:[0-9]{2}" @bind="returnTime">
                 </div>
                 <button type="submit" @onclick="Add"><b>Запази игра</b></button>
             </form>
@@ -185,16 +185,17 @@ else
         var authState = await authStateProvider.GetAuthenticationStateAsync();
         var User = authState.User;
         userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        user = await userService.GetById(userId);
+        
 
         await LoadComments();
-        var authState = await authStateProvider.GetAuthenticationStateAsync();
-        var user = authState.User;
-        isAdmin = user.IsInRole("Admin");
+        
+        //var user = authState.User;
+        user = await userService.GetById(userId);
+        isAdmin = User.IsInRole("Admin");
 
-        if (user.Identity.IsAuthenticated)
+        if (User.Identity.IsAuthenticated)
         {
-            Comment.UserId = user.FindFirst(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+            Comment.UserId = User.FindFirst(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
         }
         else
         {
@@ -210,7 +211,7 @@ else
 
     private async Task LoadComments()
     {
-        comments = await CommentService.GetCommentsByGameIdAsync(Id);
+        comments = await CommentService.GetCommentsByGameIdAsync(game.Id);
     }
 
     private async Task HandleValidSubmit()
@@ -220,7 +221,7 @@ else
             errorMessage = "Коментарът не може да бъде празен.";
             return;
         }
-        Comment.GameId = Id;
+        Comment.GameId = game.Id;
         Comment.Hour = DateTime.Now;
         await CommentService.AddCommentAsync(Comment);
         comments = new List<Comment>();
