@@ -4,8 +4,42 @@
 @using MimeKit
 @using Monkey.Core.Services.EmailServices
 @inject NavigationManager Navigation
+@inject AuthenticationStateProvider AuthenticationStateProvider
 @inject IEmailService emailService
-
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container-fluid">
+        <NavLink href="/home" style="text-decoration: none">
+            <a class="navbar-brand">Board Games</a>
+        </NavLink>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <NavLink href="/home" style="text-decoration: none">
+                        <a class="nav-link">Начало</a>
+                    </NavLink>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/catalog">Каталог</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Статистики</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/contact">Свържи се с нас</a>
+                </li>
+                @if (isAdmin)
+                {
+                    <li class="nav-item">
+                        <a class="nav-link" href="/game/create">Добави игра</a>
+                    </li>
+                }
+            </ul>
+        </div>
+    </div>
+</nav>
 <div class="field">
     <div class="container">
         <div class="content">
@@ -14,6 +48,7 @@
                 <EditForm Model="contactModel" OnValidSubmit="HandleSubmit" FormName="SubmitToGmail">
                     <DataAnnotationsValidator />
                     <ValidationSummary />
+
                     <div class="entry">
                         <label for="name">Име:</label>
                         <InputText id="name" @bind-Value="contactModel.Name" required />
@@ -54,10 +89,19 @@
     </div>
 </div>
 
-    @code {
+@code {
     [SupplyParameterFromForm(FormName = "SubmitToGmail")]
     private ContactModel contactModel { get; set; } = new ContactModel();
     public bool isSubmited = false;
+    public bool isAdmin;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        isAdmin = user.IsInRole("Admin");
+    }
     private async Task HandleSubmit()
     {
         try

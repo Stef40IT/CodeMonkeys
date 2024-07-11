@@ -1,0 +1,95 @@
+﻿@page "/reports"
+@rendermode InteractiveServer
+@using Monkey.Core.Projections.Games
+@using Monkey.Data.Data
+@using Monkey.Data.Data.Entities
+@using Monkey.Data
+@using Monkey.Core.Services.GameServices
+@using Monkey.Core.Projections
+@using Monkey.Web.ViewModels.Game
+@inject IGameService gameService
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject NavigationManager NavManager
+
+<h1>Reports</h1>
+
+@if (loading)
+{
+    
+    <p>Loading...</p>
+}
+else
+{
+    <div class="container">
+        <div class="box1">
+            <h2>Средна Оценка На Всички Игри: @averageRating</h2>
+        </div>
+        <div class="box1">
+            <h2>Общ Брой Свободни Игри: @freeGamesCount</h2>
+        </div>
+        <div class="lists">
+            <h2>Top 5 Most Played Games</h2>
+                @foreach (var game in top5MostPlayed)
+                {
+                    <div class="game-card" @onclick="() => OpenGameDetails(game.Id)">
+
+                        <div class="game-info">
+                            <div class="game-name">Име на игра: @game.Name</div>
+                            <div class="game-count">Средна оценка: @game.Count</div>
+                        </div>
+                    </div>
+                }
+            
+        </div>
+        <div class="lists">
+            <h2>Top 5 Highest Rated Games</h2>
+            
+                @* @foreach (var game in top5HighestRated)
+                {
+                     <div class="game-card" @onclick="() => OpenGameDetails(game.Id)">
+                            
+                            <div class="game-info">
+                                <div class="game-name">Име на игра: @game.Name</div>
+                                <div class="game-count">Средна оценка: @game.AverageRating</div>
+                            </div>
+                     </div>
+                } *@
+            
+        </div>
+    </div>
+}
+
+@code {
+    private List<GameGeneralInfoProjection> GameList;
+    private List<(string Name, int Count, int Id)> top5MostPlayed;
+    private List<(string Name, double AverageRating, int Id)> top5HighestRated;
+    private double averageRating;
+    private int freeGamesCount;
+    private bool loading = true;
+
+
+    protected override async Task OnInitializedAsync()
+    {
+            var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+            var user = authState.User;
+            var isAdmin = user.IsInRole("Admin");
+
+            if (!isAdmin)
+            {
+                NavManager.NavigateTo("/home");
+            }
+            GameList = (await gameService.GetAllGames()).ToList();
+
+            //averageRating = GameList.Where(g => g.Raitings.Any()).Average(g => g.Raitings.Average(r => r.Rate));
+            freeGamesCount = GameList.Count(g => !g.isBooked);
+            top5MostPlayed = GameList.OrderByDescending(g => g.Count).Take(5).Select(g => (g.Name, g.Count, g.Id)).ToList();
+            //top5HighestRated = GameList.Where(g => g.Raitings.Any()).OrderByDescending(g => g.Raitings.Average(r => r.Rate)).Take(5).Select(g => (g.Name, g.Raitings.Average(r => r.Rate), g.Id)).ToList();
+
+            loading = false;
+        
+        
+    }
+
+    private void OpenGameDetails(int gameId) => NavManager.NavigateTo($"/game/{gameId}");
+
+}

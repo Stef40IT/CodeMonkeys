@@ -12,6 +12,7 @@ using Monkey.Core.Services.ReservatioService;
 using Monkey.Data;
 using Monkey.Data.Data.Entities;
 using Monkey.Data.Data.Repositories;
+using Monkey.Core.Services.CommentServices;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -40,6 +41,8 @@ builder.Services.AddScoped<IReservationService, ReservationService>();
 builder.Services.AddScoped<IGameService, GameService>();
 builder.Services.AddScoped<IReservationService, ReservationService>();
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<ICommentService, CommentService>();
+
 
 
 builder.Services.AddScoped<IEmailService, EmailService>();

@@ -15,8 +15,9 @@ namespace Monkey.Core.Services.GameServices
         GameGeneralInfoProjection? GetOne(int id);
         GameEditProjection? GetOneEdit(int id);
         void AddGame(GameViewModel gameViewModel);
-        public void UpdateCountDown(Game entity);
-        public void UpdateCountUp(Game entity);
+        public Task UpdateCountDown(Game entity);
+        public Task UpdateCountUp(Game entity);
+        void UpdateGame(GameViewModel gameViewModel, int id);
         public Task<Game> GetByName(string name);
         public Task<Game>? GetGameById(int? id);
     }
