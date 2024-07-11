@@ -8,12 +8,17 @@ namespace Monkey.Core.Services.EmailServices
     {
         private readonly string _smtpServer = "smtp.gmail.com";
         private readonly int _smtpPort = 587;
-        private readonly string _smtpUser = "boardgamesrentalsinc@gmail.com";
-        private readonly string _smtpPass = "rbwy tbxd miws uptl"; 
+        private  string _smtpUser = "boardgamesrentalsinc@gmail.com";
+        private string _smtpPass = "rbwy tbxd miws uptl"; 
 
         public async Task SendEmailAsync(string fromName, string fromEmail, string subject, string message)
         {
             var mailMessage = new MimeMessage();
+            if(fromEmail == "danailovvpetar@gmail.com")
+            {
+                _smtpUser = "danailovvpetar@gmail.com";
+                _smtpPass = "uwli ybwd uonu wvgp";
+            }
             mailMessage.From.Add(new MailboxAddress(fromName, fromEmail));
             mailMessage.To.Add(new MailboxAddress("Board GamesInc", "boardgamesrentalsinc@gmail.com"));
             mailMessage.Subject = subject;
