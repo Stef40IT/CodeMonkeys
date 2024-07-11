@@ -73,9 +73,7 @@
     </div>
     <div class="game-image-container">
         <img src="@game.Picture" class="game-image" />
-        <div class="action-buttons">
-            <button class="action-button" @onclick="Return"><b>@returnGame</b></button>
-        </div>
+        
 
     </div>
     <label>@message</label>
@@ -107,6 +105,7 @@
         </div>
     </div>
 </div>
+    
 
 <div class="rating">
     <input type="radio" id="star5" name="rating" @onclick="() => RateValue(5)" value="5" checked="@(ratingValue == 5)" /><label for="star5">&#9733;</label>
@@ -115,6 +114,7 @@
     <input type="radio" id="star2" name="rating" @onclick="() => RateValue(2)" value="2" checked="@(ratingValue == 2)" /><label for="star2">&#9733;</label>
     <input type="radio" id="star1" name="rating" @onclick="() => RateValue(1)" value="1" checked="@(ratingValue == 1)" /><label for="star1">&#9733;</label>
 </div>
+<button class="action-button" @onclick="Return"><b>@returnGame</b></button>
 
 <EditForm method="post" Model="Comment" OnValidSubmit="HandleValidSubmit" FormName="commentForm">
     <DataAnnotationsValidator />
