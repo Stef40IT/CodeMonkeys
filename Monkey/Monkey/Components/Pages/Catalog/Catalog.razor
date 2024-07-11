@@ -76,6 +76,7 @@
     private List<GameGeneralInfoProjection> GameList;
     private List<GameGeneralInfoProjection> sortedGames;
     private List<Favorite> favoriteList;
+    private List<GameGeneralInfoProjection> favoriteGamesList;
     private string selectedCriteria;
     private string CurUserId;
     private ApplicationUser user;
@@ -95,6 +96,7 @@
         Game = new Game();
         fav = new Favorite();
         favoriteList = await favoriteService.GetFav(CurUserId);
+        favoriteGamesList = await favoriteService.GetFavProj(CurUserId);
     }
 
     private string SelectedCriteria
@@ -136,8 +138,7 @@
                 sortedGames = GameList.OrderByDescending(g => g.Count).ToList();
                 break;
             case "Favorites":
-                int[] ids = await FilterByFavorites();
-                sortedGames = GameList.Where(g => ids.Contains(g.Id)).ToList(); // (await FilterByFavorites());
+                sortedGames = favoriteGamesList;
                 break;
             default:
                 sortedGames = GameList;
@@ -157,18 +158,17 @@
         if (favoriteService.Contains(gameId, CurUserId).Result)
         {
             //favoriteGames.Remove(gameId);
-            favoriteService.RemoveFromFavoritesAsync(fav);
+            favoriteService.RemoveFromFavorites(fav);
         }
         else
         {
             //favoriteGames.Add(gameId);
-            favoriteService.AddToFavoritesAsync(fav);
+            favoriteService.AddToFavorites(fav);
         }
     }
 
     private string GetHeartClass(int gameId) 
     { 
-        // userService.Contains(gameId).Result ? "heart-icon filled" : "heart-icon"; 
         foreach(Favorite f in favoriteList)
         {
             if(f.GameId == gameId)
@@ -178,31 +178,5 @@
         }
 
         return "heart-icon";
-    }
-    public async Task<int[]> FilterByFavorites()
-    {
-        List<GameGeneralInfoProjection> ans = new List<GameGeneralInfoProjection>();
-
-        var favoriteList = (await favoriteService.GetFavoriteGamesAsync(CurUserId));
-        var result = favoriteList.Select(g => g.Id).ToArray();
-        foreach (Game f in favoriteList)
-        {
-            GameGeneralInfoProjection favGame = new GameGeneralInfoProjection
-                {
-                    Id = f.Id,
-                    Name = f.Name,
-                    Description = f.Description,
-                    Picture = f.Picture,
-                    Difficulty = f.Difficulty,
-                    Count = f.Count,
-                    Comments = f.Comments,
-                    Raitings = f.Raitings,
-                    Reservations = f.Reservations,
-                    isBooked = f.isBooked
-                };
-            ans.Add(favGame);
-        }
-
-        return result;
     }
 }

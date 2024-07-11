@@ -11,9 +11,12 @@ namespace Monkey.Core.Services.FavoriteServices
     public interface IFavoriteService
     {
         Task<List<Game>> GetFavoriteGamesAsync(string userId);
-        Task AddToFavoritesAsync(Favorite favorite);
-        Task RemoveFromFavoritesAsync(Favorite favorite);
+        Task AddToFavorites(Favorite favorite);
+        Task RemoveFromFavorites(Favorite favorite);
+        Task AddToFavoritesAsync(string userId, int gameId);
+        Task RemoveFromFavoritesAsync(string userId, int gameId);
         Task<bool> Contains(int gameId, string userId);
+        public Task<List<GameGeneralInfoProjection>> GetFavProj(string userId);
         public Task<List<Favorite>> GetFav(string userId);
     }
 }

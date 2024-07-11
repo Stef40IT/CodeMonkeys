@@ -30,13 +30,56 @@ namespace Monkey.Core.Services.FavoriteServices
             return (_context.Favorites.Where(f => f.UserId == userId)).ToList();
         }
 
-        public async Task AddToFavoritesAsync(Favorite favorite)
+        public async Task AddToFavoritesAsync(string userId, int gameId)
+        {
+            var favorite = new Favorite { UserId = userId, GameId = gameId };
+            _context.Favorites.Add(favorite);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task RemoveFromFavoritesAsync(string userId, int gameId)
+        {
+            var favorite = await _context.Favorites
+                .FirstOrDefaultAsync(f => f.UserId == userId && f.GameId == gameId);
+            if (favorite != null)
+            {
+                _context.Favorites.Remove(favorite);
+                await _context.SaveChangesAsync();
+            }
+        }
+
+        public async Task<List<GameGeneralInfoProjection>> GetFavProj(string userId)
+        {
+            var favoriteList = _context.Favorites.Where(f => f.UserId == userId).Select(f => f.Game).ToList();
+            var result = new List<GameGeneralInfoProjection>();
+            foreach (Game f in favoriteList)
+            {
+                GameGeneralInfoProjection favGame = new GameGeneralInfoProjection
+                {
+                    Id = f.Id,
+                    Name = f.Name,
+                    Description = f.Description,
+                    Picture = f.Picture,
+                    Difficulty = f.Difficulty,
+                    Count = f.Count,
+                    Comments = f.Comments,
+                    Raitings = f.Raitings,
+                    Reservations = f.Reservations,
+                    isBooked = f.isBooked
+                };
+                result.Add(favGame);
+            }
+
+            return result;
+        }
+
+        public async Task AddToFavorites(Favorite favorite)
         {
             _context.Favorites.Add(favorite);
             await _context.SaveChangesAsync();
         }
 
-        public async Task RemoveFromFavoritesAsync(Favorite favorite)
+        public async Task RemoveFromFavorites(Favorite favorite)
         {
             if (favorite != null)
             {
