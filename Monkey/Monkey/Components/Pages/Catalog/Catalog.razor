@@ -1,12 +1,21 @@
-﻿@page "/catalog"
+@page "/catalog"
 @rendermode InteractiveServer
 @using Monkey.Core.Projections.Games
 @using Monkey.Data.Data.Entities
 @using Monkey.Core.Services.GameServices
+@using Monkey.Core.Services.UserService
+@using Monkey.Core.Services.FavoriteServices
 @using Monkey.Core.Projections
+@using System.Linq
 @using Monkey.Web.ViewModels.Catalog
 @using Microsoft.AspNetCore.Identity
 @inject NavigationManager NavManager
+@inject IGameService gameService
+@inject IFavoriteService favoriteService
+@inject IUserService userService
+@using System.Security.Claims
+@using Microsoft.AspNetCore.Identity
+@inject AuthenticationStateProvider AuthenticationStateProvider
 @inject SignInManager<ApplicationUser> signInManager
 @inject UserManager<ApplicationUser> userManager
 @inject AuthenticationStateProvider AuthenticationStateProvider
@@ -61,6 +70,7 @@
             <option value="DifficultyDescending">Сложност(4-1)</option>
             <option value="Rating">Оценка</option>
             <option value="Count">Налични</option>
+            <option value="Favorites">Любими</option>
         </select>
     </div>
 </div>
@@ -87,7 +97,7 @@
                                 <div class="game-difficulty">Difficulty: @game.Difficulty</div>
                             </div>
                             <div class="favorite-icon">
-                                <svg viewBox="0 0 24 24" width="24" height="24" class="@GetHeartClass(game.Id)" @onclick="() => ToggleFavorite(game.Id)">
+                                <svg viewBox="0 0 24 24" width="24" height="24" class="@GetHeartClass(game.Id)" @onclick:stopPropagation @onclick="() => ToggleFavorite(game.Id)">
                                     <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41 0.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
                                 </svg>
                             </div>
@@ -107,7 +117,14 @@
 @code {
     private List<GameGeneralInfoProjection> GameList;
     private List<GameGeneralInfoProjection> sortedGames;
+    private List<Favorite> favoriteList;
+    private List<GameGeneralInfoProjection> favoriteGamesList;
     private string selectedCriteria;
+
+    private string CurUserId;
+    private ApplicationUser user;
+    private Favorite fav;
+    private Game Game;
     private HashSet<int> favoriteGames = new();
     bool isAdmin;
 
@@ -118,8 +135,17 @@
 
         isAdmin = user.IsInRole("Admin");
 
+
         GameList = (await gameService.GetAllGames()).Take(20).ToList();
         sortedGames = GameList;
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var userPrin = authState.User;
+        CurUserId = userPrin.FindFirstValue(ClaimTypes.NameIdentifier);
+        user = await UserManager.GetUserAsync(userPrin);
+        Game = new Game();
+        fav = new Favorite();
+        favoriteList = await favoriteService.GetFav(CurUserId);
+        favoriteGamesList = await favoriteService.GetFavProj(CurUserId);
     }
 
     private string SelectedCriteria
@@ -132,7 +158,7 @@
         }
     }
 
-    private void OnCriteriaChanged()
+    private async void OnCriteriaChanged()
     {
         if (string.IsNullOrEmpty(selectedCriteria))
         {
@@ -160,29 +186,34 @@
             case "Count":
                 sortedGames = GameList.OrderByDescending(g => g.Count).ToList();
                 break;
+            case "Favorites":
+                sortedGames = favoriteGamesList;
+                break;
             default:
                 sortedGames = GameList;
                 break;
         }
     }
 
-    [Inject]
-    private IGameService gameService { get; set; }
-
     private void OpenGameDetails(int gameId) => NavManager.NavigateTo($"/game/{gameId}");
     private void SendToHome() => NavManager.NavigateTo($"/home");
 
     private double AverageRating(ICollection<Rating> ratings) => ratings.Average(r => r.Rate);
 
-    private void ToggleFavorite(int gameId)
+    private async void ToggleFavorite(int gameId)
     {
-        if (favoriteGames.Contains(gameId))
+        Game = (await gameService.GetGameById(gameId));
+        fav.User = user;
+        fav.Game = Game;
+        if (favoriteService.Contains(gameId, CurUserId).Result)
         {
-            favoriteGames.Remove(gameId);
+            //favoriteGames.Remove(gameId);
+            favoriteService.RemoveFromFavorites(fav);
         }
         else
         {
-            favoriteGames.Add(gameId);
+            //favoriteGames.Add(gameId);
+            favoriteService.AddToFavorites(fav);
         }
     }
     private async Task Delete(int id)
@@ -196,5 +227,16 @@
         NavManager.NavigateTo($"game/edit/{id}");
     }
 
-    private string GetHeartClass(int gameId) => favoriteGames.Contains(gameId) ? "heart-icon filled" : "heart-icon";
+    private string GetHeartClass(int gameId) 
+    { 
+        foreach(Favorite f in favoriteList)
+        {
+            if(f.GameId == gameId)
+            {
+                return "heart-icon filled";
+            }
+        }
+
+        return "heart-icon";
+    }
 }
