@@ -116,7 +116,7 @@
                     <div class="card-content">
                         <h2 class="card-title">@game.Name</h2>
                         <p class="card-body">
-                            Брой играчи: @game.Difficulty | Рейтинг: 5⭐
+                                Брой играчи: @game.Difficulty | @AverageRating(game.Raitings)
                         </p>
                         <a href="/game/@game.Id" class="button">Към играта</a>
                     </div>
@@ -139,7 +139,7 @@
                         <h2 class="card-title">@game.Name</h2>
                         <p class="card-body">
                             @* @firstSentence *@
-                                Брой играчи: @game.Difficulty | Рейтинг: @game.Raitings
+                                Брой играчи: @game.Difficulty | @AverageRating(game.Raitings)
                         </p>
                             <a href="/game/@game.Id" class="button">Към играта</a>
                     </div>
@@ -163,7 +163,7 @@
                             <h2 class="card-title">@game.Name</h2>
                             <p class="card-body">
                                 @* @firstSentence *@
-                                Брой играчи: @game.Difficulty | Рейтинг: @game.Raitings
+                                Брой играчи: @game.Difficulty | @AverageRating(game.Raitings) 
                             </p>
                             <a href="/game/@game.Id" class="button">Към играта</a>
                         </div>
@@ -200,7 +200,12 @@
         var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
         var user = authState.User;
         isAdmin = user.IsInRole("Admin");
-    }
 
+    }
+    private string AverageRating(ICollection<Rating> ratings) 
+    {
+        if (ratings.Count() != 0) return $"Рейтинг: {ratings.Average(r => r.Rate)} ⭐";
+        else return "Играта няма рейтинг";
+    }
     
 }

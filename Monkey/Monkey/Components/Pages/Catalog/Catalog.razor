@@ -172,7 +172,11 @@
     private void OpenGameDetails(int gameId) => NavManager.NavigateTo($"/game/{gameId}");
     private void SendToHome() => NavManager.NavigateTo($"/home");
 
-    private double AverageRating(ICollection<Rating> ratings) => ratings.Average(r => r.Rate);
+    private double AverageRating(ICollection<Rating> ratings) 
+    {
+        if (ratings.Count() != 0) return ratings.Average(r => r.Rate);
+        else return 0;
+    }
 
     private void ToggleFavorite(int gameId)
     {
