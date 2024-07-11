@@ -98,10 +98,10 @@
         var user = authState.User;
         var isAdmin = user.IsInRole("Admin");
 
-        //if (!isAdmin)
-        //{
-        //NavigationManager.NavigateTo("/");
-        //}
+        if (!isAdmin)
+        {
+            NavigationManager.NavigateTo("/home");
+        }
     }
 
     public async void CreateGame()

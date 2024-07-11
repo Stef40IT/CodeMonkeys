@@ -69,7 +69,9 @@
 
                     <div class="entry">
                         <label for="message">Съобщение:</label>
-                        <InputTextArea id="message" @bind-Value="contactModel.Message" required />
+                        <div class="msg">
+                            <InputTextArea id="message" @bind-Value="contactModel.Message" required />
+                        </div>
                         <ValidationMessage For="() => contactModel.Message" />
                     </div>
 
