@@ -3,6 +3,7 @@
 @using Monkey.Core.Services.EmailServices
 @using Monkey.Core.Services.CommentServices
 @using Monkey.Core.Services.GameServices
+@using Monkey.Core.Services.Ratings
 @using Monkey.Data;
 @using Monkey.Data.Data.Entities;
 @using Microsoft.AspNetCore.Identity
@@ -21,6 +22,7 @@
 @inject AuthenticationStateProvider authStateProvider
 @inject UserManager<ApplicationUser> UserManager
 @inject IEmailService emailSender
+@inject IRatingService ratingService;
 @rendermode InteractiveServer
 
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
@@ -99,11 +101,11 @@
 </div>
 
 <div class="rating">
-    <input type="radio" id="star5" name="rating" value="5" /><label for="star5">&#9733;</label>
-    <input type="radio" id="star4" name="rating" value="4" /><label for="star4">&#9733;</label>
-    <input type="radio" id="star3" name="rating" value="3" /><label for="star3">&#9733;</label>
-    <input type="radio" id="star2" name="rating" value="2" /><label for="star2">&#9733;</label>
-    <input type="radio" id="star1" name="rating" value="1" /><label for="star1">&#9733;</label>
+    <input type="radio" id="star5" name="rating" @onclick="() => RateValue(5)" value="5" /><label for="star5">&#9733;</label>
+    <input type="radio" id="star4" name="rating" @onclick="() => RateValue(4)" value="4" /><label for="star4">&#9733;</label>
+    <input type="radio" id="star3" name="rating" @onclick="() => RateValue(3)" value="3" /><label for="star3">&#9733;</label>
+    <input type="radio" id="star2" name="rating" @onclick="() => RateValue(2)" value="2" /><label for="star2">&#9733;</label>
+    <input type="radio" id="star1" name="rating" @onclick="() => RateValue(1)" value="1" /><label for="star1">&#9733;</label>
 </div>
 
 <EditForm method="post" Model="Comment" OnValidSubmit="HandleValidSubmit" FormName="commentForm">
@@ -129,7 +131,7 @@ else
             <li>
                 <strong>@comment.User.UserName</strong> (@comment.Hour.ToString("g")):
                 <p>@comment.Text</p>
-                @if(isAdmin)
+                @if (isAdmin)
                 {
                     <button @onclick="async () => await Delete(comment)" class="deleteButton">Изтрий</button>
                 }
@@ -160,15 +162,16 @@ else
     public Comment Comment { get; set; } = new Comment();
     private string errorMessage;
     public bool isAdmin;
+
+    Rating? rating;
+    private int ratingValue;
     private string bookGame = "Запази игра";
     private string returnGame = "Върни игра";
 
     protected override async Task OnInitializedAsync()
     {
-        if (Id != null)
-        {
-            gameName = (await gameService.GetGameById(Id)).Name;
-        }
+
+        gameName = (await gameService.GetGameById(Id)).Name;
         game = await gameService.GetGameById(Id);
         reserv = new Reservation();
         var authState = await authStateProvider.GetAuthenticationStateAsync();
@@ -212,6 +215,11 @@ else
         await CommentService.AddCommentAsync(Comment);
         comments = new List<Comment>();
         await LoadComments();
+        if(ratingValue != 0)
+        {
+            await Rate(ratingValue);
+        }
+        
         NavManager.NavigateTo($"game/{Id}", forceLoad: true);
     }
 
@@ -267,9 +275,9 @@ else
                     mailMessage.To.Add(new MailboxAddress(user.UserName, user.Email));
                     mailMessage.Subject = subject;
                     mailMessage.Body = new TextPart("plain")
-                    {
-                        Text = text
-                    };
+                        {
+                            Text = text
+                        };
 
                     using (var smtpClient = new MailKit.Net.Smtp.SmtpClient())
                     {
@@ -295,4 +303,30 @@ else
             new Exception("Cannot return game");
         }
     }
+
+    private async Task Rate(int value)
+    {
+        var existingRating = await ratingService.GetRatingByUserAndGameAsync(user.Id, game.Id);
+        if (existingRating == null)
+        {
+            rating = new Rating
+                {
+                    UserId = user.Id,
+                    GameId = game.Id,
+                    Rate = value
+                };
+            await ratingService.AddRatingAsync(rating);
+        }
+        else
+        {
+            throw new Exception("Already existing rating.");
+        }
+    }
+    private async void RateValue(int values)
+    {
+        ratingValue = values;
+    }
 }
+
+}
+
