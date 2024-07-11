@@ -1,4 +1,5 @@
 ﻿@page "/contact"
+@rendermode InteractiveServer
 @using System.ComponentModel.DataAnnotations
 @using MailKit.Net.Smtp
 @using MimeKit
@@ -6,6 +7,7 @@
 @inject NavigationManager NavManager
 @inject AuthenticationStateProvider AuthenticationStateProvider
 @inject IEmailService emailService
+
 <PageTitle>Контакти</PageTitle>
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <div class="container-fluid">
@@ -105,6 +107,11 @@
         var user = authState.User;
 
         isAdmin = user.IsInRole("Admin");
+
+        if(!user.Identity.IsAuthenticated)
+        {
+            NavManager.NavigateTo("/");
+        }
     }
 
     private void SignOut()

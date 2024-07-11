@@ -12,5 +12,7 @@ namespace Monkey.Core.Services.Ratings
         Task AddRatingAsync(Rating rating);
         Task<Rating> GetRatingByUserAndGameAsync(string userId, int gameId);
         Task<List<Rating>> GetRatingsByGameAsync(int gameId);
+        Task UpdateRatingAsync(Rating rating);
+
     }
 }

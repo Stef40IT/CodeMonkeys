@@ -41,6 +41,9 @@
                         <a class="nav-link" href="/game/create">Добави игра</a>
                     </li>
                 }
+                <li class="nav-item">
+                    <a class="nav-link" @onclick="SignOut">Излез</a>
+                </li>
             </ul>
         </div>
     </div>
@@ -182,10 +185,20 @@
         var user = authState.User;
         isAdmin = user.IsInRole("Admin");
 
+        if(!user.Identity.IsAuthenticated)
+        {
+            NavManager.NavigateTo("/");
+        }
     }
+
+    private void SignOut()
+    {
+        NavManager.NavigateTo("logout");
+    }
+
     private string AverageRating(ICollection<Rating> ratings) 
     {
-        if (ratings.Count() != 0) return $"Рейтинг: {ratings.Average(r => r.Rate):f2} ⭐";
+        if (ratings.Count() != 0) return $"Рейтинг: {ratings.Average(r => r.Rate):f2}";
         else return "Играта няма рейтинг";
     }
     private double AverageRatings(ICollection<Rating> ratings)
