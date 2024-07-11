@@ -113,8 +113,8 @@
                             </div>
                             @if (isAdmin)
                             {
-                                <button class="deleteButton" @onclick="async () => await Delete(game.Id)">Изтрий</button>
-                                <button class="editButton" @onclick="async () => await Update(game.Id)">Редактирай</button>
+                                <button class="deleteButton" @onclick:stopPropagation @onclick="async () => await Delete(game.Id) ">Изтрий</button>
+                                <button class="editButton" @onclick:stopPropagation @onclick="async () => await Update(game.Id)">Редактирай</button>
                             }
                         </div>
                      
