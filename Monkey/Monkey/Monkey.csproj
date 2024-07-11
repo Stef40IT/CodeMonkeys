@@ -10,12 +10,14 @@
   <ItemGroup>
     <None Remove="Components\Account\Pages\Login.razor.css" />
     <None Remove="Components\Account\Pages\Register.razor.css" />
+    <None Remove="Components\Pages\GamePage\GamePage.razor.js" />
     <None Remove="Components\Pages\Home.razor.css" />
   </ItemGroup>
 
   <ItemGroup>
     <Content Include="Components\Account\Pages\Login.razor.css" />
     <Content Include="Components\Account\Pages\Register.razor.css" />
+    <Content Include="Components\Pages\GamePage\GamePage.razor.js" />
     <Content Include="Components\Pages\Home.razor.css" />
   </ItemGroup>
 
@@ -40,7 +42,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Components\Pages\GamePage\" />
     <Folder Include="wwwroot\uploadedImages\" />
   </ItemGroup>
 

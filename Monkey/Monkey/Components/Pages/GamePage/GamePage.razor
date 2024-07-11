@@ -1,7 +1,7 @@
-﻿@page "/game/{id:int}"
-
+@page "/game/{id:int}"
 @using MimeKit
 @using Monkey.Core.Services.EmailServices
+@using Monkey.Core.Services.CommentServices
 @using Monkey.Core.Services.GameServices
 @using Monkey.Data;
 @using Monkey.Data.Data.Entities;
@@ -13,7 +13,8 @@
 @using Monkey.Core.Projections;
 @using Monkey.Core.Services.UserService
 @using System.Security.Claims
-@inject IGameService gameService;
+@inject ICommentService CommentService
+@inject IGameService gameService
 @inject IReservationService reservService
 @inject IUserService userService
 @inject NavigationManager NavManager
@@ -22,9 +23,36 @@
 @inject IEmailService emailSender
 @rendermode InteractiveServer
 
-
-<h3>Игра</h3>
-
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="#">Board Games</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link" href="/Account/Login">Начало</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/catalog">Каталог</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Статистики</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/contact">Свържи се с нас</a>
+                </li>
+                @if (isAdmin)
+                {
+                    <li class="nav-item">
+                        <a class="nav-link" href="/game/create">Добави игра</a>
+                    </li>
+                }
+            </ul>
+        </div>
+    </div>
+</nav>
 
 <div class="game-container">
     <div class="game-header">
@@ -79,6 +107,51 @@
     </table>
 }
 
+<div class="rating">
+    <input type="radio" id="star5" name="rating" value="5" /><label for="star5">&#9733;</label>
+    <input type="radio" id="star4" name="rating" value="4" /><label for="star4">&#9733;</label>
+    <input type="radio" id="star3" name="rating" value="3" /><label for="star3">&#9733;</label>
+    <input type="radio" id="star2" name="rating" value="2" /><label for="star2">&#9733;</label>
+    <input type="radio" id="star1" name="rating" value="1" /><label for="star1">&#9733;</label>
+</div>
+
+<EditForm method="post" Model="Comment" OnValidSubmit="HandleValidSubmit" FormName="commentForm">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <input @bind-value="Comment.Text" placeholder="Вашият коментар" class="comment-input"></input>
+
+    <button type="submit" class="comment-button">
+        <b>Добави</b>
+    </button>
+</EditForm>
+
+@if (comments == null)
+{
+    <p>Зареждане...</p>
+}
+else
+{
+    <ul>
+        @foreach (var comment in comments)
+        {
+            <li>
+                <strong>@comment.User.UserName</strong> (@comment.Hour.ToString("g")):
+                <p>@comment.Text</p>
+                @if(isAdmin)
+                {
+                    <button @onclick="async () => await Delete(comment)" class="deleteButton">Изтрий</button>
+                }
+            </li>
+        }
+    </ul>
+}
+
+@if (!string.IsNullOrEmpty(errorMessage))
+{
+    <p style="color:red;">@errorMessage</p>
+}
+
 @code {
     [Parameter]
     public int? Id { get; set; }
@@ -91,10 +164,14 @@
     Game? game;
     ApplicationUser user;
     string? userId;
+    private List<Comment> comments;
+    [SupplyParameterFromForm(FormName = "commentForm")]
+    public Comment Comment { get; set; } = new Comment();
+    private string errorMessage;
+    public bool isAdmin;
 
-    protected override async void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
-
         if (Id.HasValue)
         {
             gameName = (await gameService.GetGameById(Id)).Name;
@@ -105,6 +182,45 @@
         var User = authState.User;
         userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
         user = await userService.GetById(userId);
+
+        await LoadComments();
+        var authState = await authStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        isAdmin = user.IsInRole("Admin");
+
+        if (user.Identity.IsAuthenticated)
+        {
+            Comment.UserId = user.FindFirst(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+        }
+        else
+        {
+            NavManager.NavigateTo("/login");
+        }
+    }
+
+    private async Task Delete(Comment comment)
+    {
+        await CommentService.DeleteCommentAsync(comment);
+        await LoadComments();
+    }
+
+    private async Task LoadComments()
+    {
+        comments = await CommentService.GetCommentsByGameIdAsync(Id);
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        if (string.IsNullOrEmpty(Comment.Text))
+        {
+            errorMessage = "Коментарът не може да бъде празен.";
+            return;
+        }
+        Comment.GameId = Id;
+        Comment.Hour = DateTime.Now;
+        await CommentService.AddCommentAsync(Comment);
+        comments = new List<Comment>();
+        await LoadComments();
     }
 
     private async Task Add()
@@ -118,7 +234,6 @@
             game = await gameService.GetByName(gameName);
         }
 
-
         if (!game.isBooked && DateTime.Compare(bookDate, returnDate) <= 0)
         {
             reserv.Game = game;
@@ -126,17 +241,14 @@
             reserv.ReturnDate = returnDate + returnTime;
             reserv.User = user;
             reservService.Create(reserv);
-           await Task.Delay(100);
+            await Task.Delay(100);
             await gameService.UpdateCountDown(game);
-
         }
         else
         {
             throw new Exception("Играта не е в наличност");
-
         }
         reserv = new Reservation();
-        // user = new ApplicationUser();
     }
 
     private async void Return()
@@ -144,7 +256,6 @@
         List<Reservation> l = reservService.GetReservations(Id, userId);
         if (reservService.isBooked(ref l, userId, Id))
         {
-
             gameService.UpdateCountUp((await gameService.GetGameById(Id)));
             await Task.Delay(100);
             reservService.Update(l[0]);
@@ -160,9 +271,9 @@
                     mailMessage.To.Add(new MailboxAddress(user.UserName, user.Email));
                     mailMessage.Subject = subject;
                     mailMessage.Body = new TextPart("plain")
-                        {
-                            Text = text
-                        };
+                    {
+                        Text = text
+                    };
 
                     using (var smtpClient = new MailKit.Net.Smtp.SmtpClient())
                     {
@@ -171,8 +282,6 @@
                         await smtpClient.SendAsync(mailMessage);
                         await smtpClient.DisconnectAsync(true);
                     }
-
-
                 }
                 else
                 {
@@ -181,16 +290,12 @@
             }
             catch (Exception ex)
             {
-                // Handle or log the exception
                 Console.WriteLine($"An error occurred: {ex.Message}");
             }
         }
         else
         {
             new Exception("Cannot return game");
-           
         }
-        
-
     }
 }

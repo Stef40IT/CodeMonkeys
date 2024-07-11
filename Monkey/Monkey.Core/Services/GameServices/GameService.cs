@@ -12,6 +12,7 @@ using Monkey.Data;
 using Monkey.Data.Data.Entities;
 using Monkey.Data.Data.Repositories;
 using Monkey.Web.ViewModels.Game;
+using static Azure.Core.HttpHeader;
 
 namespace Monkey.Core.Services.GameServices
 {
@@ -35,6 +36,19 @@ namespace Monkey.Core.Services.GameServices
             this.Repository.Create(game);
             
         }
+
+        public void UpdateGame(GameViewModel gameViewModel, int id)
+        {
+            Game game = Repository.Get(g => g.Id == id);
+
+            game.Name = gameViewModel.Name;
+            game.Description = gameViewModel.Description;
+            game.Difficulty = gameViewModel.Difficulty;
+            game.Count = gameViewModel.Count;
+            game.Picture = gameViewModel.Picture;
+            Repository.Update(game);
+        }
+
         public async Task<IEnumerable<GameGeneralInfoProjection>> GetAllGames()
         {
             return Repository.GetMany(_ => true, g => new GameGeneralInfoProjection
