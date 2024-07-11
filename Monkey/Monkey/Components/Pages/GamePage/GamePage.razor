@@ -71,7 +71,9 @@
         <div class="action-buttons">
             <button class="action-button" @onclick="Return"><b>@returnGame</b></button>
         </div>
+
     </div>
+    <label>@message</label>
     <div class="game-details-container">
         <div class="game-details">
             <b>  <p>@game.Description</p></b>
@@ -168,6 +170,7 @@ else
     private int ratingValue;
     private string bookGame = "Запази игра";
     private string returnGame = "Върни игра";
+    private string message;
 
     protected override async Task OnInitializedAsync()
     {
@@ -272,8 +275,8 @@ else
         List<Reservation> l = reservService.GetReservations(Id, userId);
         if (reservService.isBooked(ref l, userId, Id))
         {
-                        returnGame = "Върната!";
-                        bookGame = "Запази игра";
+            returnGame = "Върната!";
+            bookGame = "Запази игра";
             gameService.UpdateCountUp((await gameService.GetGameById(Id)));
             await Task.Delay(100);
             reservService.Update(l[0]);
@@ -313,7 +316,7 @@ else
         }
         else
         {
-            new Exception("Cannot return game");
+            message = "Не можеш да върнеш игра, която не си заел!";
         }
     }
 
@@ -342,4 +345,5 @@ else
         ratingValue = values;
     }
 }
+
 
