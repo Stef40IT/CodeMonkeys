@@ -169,3 +169,51 @@ button {
     .image-input .entry {
         margin-left: 45px;
     }
+.navbar {
+    background-color: #6c757d;
+}
+
+.navbar-brand {
+    font-size: 1.9rem;
+    font-weight: bold;
+    color: #084eec;
+}
+
+.navbar-toggler {
+    border: none;
+    outline: none;
+}
+
+
+.navbar-collapse {
+    justify-content: space-between;
+    flex-grow: 0;
+}
+
+.navbar-nav .nav-item {
+}
+
+.navbar-nav .nav-link {
+    color: orange;
+    transition: color 0.3s ease;
+    font-weight: bold;
+    font-size: 1.2rem;
+}
+
+ul {
+    align-content: flex-end;
+}
+
+
+.navbar-nav .nav-link.disabled {
+    color: #6c757d;
+}
+
+.form-control {
+    width: 200px;
+}
+
+    .form-control:focus {
+        border-color: orange;
+        box-shadow: 0 0 5px rgba(0, 123, 255, 0.25);
+    }
