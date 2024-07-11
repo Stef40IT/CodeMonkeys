@@ -74,8 +74,8 @@
             <option value="">Избери критерия</option>
             <option value="Name">Име(А-Я)</option>
             <option value="Name(Descending)">Име(Я-А)</option>
-            <option value="Difficulty">Брой играчи(1-4)</option>
-            <option value="DifficultyDescending">Брой играчи(4-1)</option>
+            <option value="Difficulty">Сложност(1-4)</option>
+            <option value="DifficultyDescending">Сложност(4-1)</option>
             <option value="Rating">Оценка</option>
             <option value="Count">Налични</option>
             <option value="Favorites">Любими</option>
@@ -102,7 +102,7 @@
                             <div class="game-info">
                                 <div class="game-name">@game.Name</div>
                                 <div class="game-count">Налични бройки: @game.Count</div>
-                                <div class="game-difficulty">Брой играчи: @game.Difficulty</div>
+                                <div class="game-difficulty">Сложност: @game.Difficulty</div>
                             </div>
                             <div class="favorite-icon">
                                 <svg viewBox="0 0 24 24" width="24" height="24" class="@GetHeartClass(game.Id).Result" @onclick:stopPropagation @onclick="async () => await ToggleFavorite(game.Id)">
