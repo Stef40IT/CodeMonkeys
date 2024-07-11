@@ -20,14 +20,19 @@
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                 <li class="nav-item">
-                    <a class="nav-link" href="/home">Начало</a>
+                    <NavLink href="/home" style="text-decoration: none">
+                        <a class="nav-link">Начало</a>
+                    </NavLink>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="/catalog">Каталог</a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/reports">Статистики</a>
-                </li>
+                @if (isAdmin)
+                {
+                    <li class="nav-item">
+                        <a class="nav-link" href="/reports">Статистики</a>
+                    </li>
+                }
                 <li class="nav-item">
                     <a class="nav-link" href="/contact">Свържи се с нас</a>
                 </li>
@@ -38,7 +43,7 @@
                     </li>
                 }
                 <li class="nav-item">
-                    <a class="nav-link" @onclick="SignOut">Излез</a>
+                    <a class="nav-link" href="logout">Излез</a>
                 </li>
             </ul>
         </div>

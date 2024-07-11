@@ -114,7 +114,7 @@ h1 {
     background-position: center;
     padding: 10rem 0 0;
     max-width: 38ch;
-    max-height: 69ch;
+    max-height: 65ch;
     border-radius: 1rem;
     overflow: hidden;
     transition: transform 500ms ease;
@@ -225,6 +225,8 @@ h1 {
 }
 
 .navbar-brand {
+    transform: translateX(-130%);
+    padding-left: -100%;
     font-size: 1.9rem;
     font-weight: bold;
     color: #084eec;
