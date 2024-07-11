@@ -109,7 +109,7 @@
 
         <h1><strong>Игри с най-висок рейтинг</strong></h1>
         <div class="card-container">
-            @foreach (var game in FourPlayersList)
+            @foreach (var game in MostRatedGamesList)
             {
                 <div class="col-md-4">
                     <div class="card" style="background-image: url('@game.Picture'); background-size: 100%;background-repeat: no-repeat;">
@@ -194,7 +194,7 @@
     {
         GameList = (await gameService.GetAllGames()).ToList();
         FourPlayersList = GameList.Where(g => g.Difficulty == 4).Take(3).ToList();
-        //MostRatedGamesList = GameList.OrderBy(g => g.Raitings).Take(3).ToList();
+        MostRatedGamesList = GameList.OrderByDescending(g => AverageRatings(g.Raitings)).Take(3).ToList();
         RandomGamesList = GameList.OrderBy(g => _random.Next()).Where(g => g.Id >= 35).Take(3).ToList();
 
         var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
@@ -204,8 +204,13 @@
     }
     private string AverageRating(ICollection<Rating> ratings) 
     {
-        if (ratings.Count() != 0) return $"Рейтинг: {ratings.Average(r => r.Rate)} ⭐";
+        if (ratings.Count() != 0) return $"Рейтинг: {ratings.Average(r => r.Rate):f2} ⭐";
         else return "Играта няма рейтинг";
+    }
+    private double AverageRatings(ICollection<Rating> ratings)
+    {
+        if (ratings.Count() != 0) return ratings.Average(r => r.Rate);
+        else return 0 ;
     }
     
 }

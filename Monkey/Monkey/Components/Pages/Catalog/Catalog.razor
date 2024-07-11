@@ -174,7 +174,7 @@
                 sortedGames = GameList.OrderByDescending(g => g.Name).ToList();
                 break;
             case "Rating":
-                sortedGames = GameList.OrderBy(g => AverageRating(g.Raitings)).ToList();
+                sortedGames = GameList.OrderByDescending(g => AverageRating(g.Raitings)).ToList();
                 break;
             case "Count":
                 sortedGames = GameList.OrderByDescending(g => g.Count).ToList();
