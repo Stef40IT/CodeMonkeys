@@ -130,6 +130,7 @@
     {
         GameList = (await gameService.GetAllGames()).Take(20).ToList();
         sortedGames = GameList;
+
         var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
         var userPrin = authState.User;
         CurrentUserId = userPrin.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -137,6 +138,7 @@
         favoriteGamesList = await favoriteService.GetFavProj(CurrentUserId);
         user = await userManager.GetUserAsync(userPrin);
         isAdmin = userPrin.IsInRole("Admin");
+ 
     }
 
     private string SelectedCriteria
@@ -189,7 +191,7 @@
     private void OpenGameDetails(int gameId) => NavManager.NavigateTo($"/game/{gameId}");
     private void SendToHome() => NavManager.NavigateTo($"/home");
 
-    private double AverageRating(ICollection<Rating> ratings) 
+    private double AverageRating(ICollection<Rating> ratings)
     {
         if (ratings.Count() != 0) return ratings.Average(r => r.Rate);
         else return 0;
