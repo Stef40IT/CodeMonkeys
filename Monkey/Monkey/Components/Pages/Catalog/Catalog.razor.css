@@ -17,6 +17,46 @@
     padding: 10px 0;
 }
 
+.deleteButton {
+    background-color: orange;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
+    margin-left: 0;
+    width: auto;
+    height:40px;
+}
+
+    .deleteButton:hover {
+        background-color: #007bff;
+        transition: background-color 0.3s, color 0.3s;
+    }
+
+
+.editButton {
+    background-color: orange;
+    color: white;
+    width: auto;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
+    margin-left: 0;
+    height: 40px;
+}
+
+.editButton:hover {
+    background-color: #007bff;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+
+
+
 .title-underline {
     width: 140%;
     height: 6px;
