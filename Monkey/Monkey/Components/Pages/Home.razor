@@ -11,56 +11,40 @@
 @inject UserManager<ApplicationUser> userManager
 @inject AuthenticationStateProvider AuthenticationStateProvider
 
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container-fluid">
+        <NavLink href="/home" style="text-decoration: none">
+            <a class="navbar-brand">Board Games</a>
+        </NavLink>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Website Main Page</title>
-    <!-- Bootstrap CSS -->
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-    
-    <link href="styles.css" rel="stylesheet">
+                <li class="nav-item">
+                    <a class="nav-link" href="/home">Начало</a>
+                </li>
 
-</head>
-<body>
-    <header>
-        <nav class="navbar navbar-expand-lg navbar-light bg-light">
-            <div class="container-fluid">
-                <NavLink href="/home" style="text-decoration: none">
-                    <a class="navbar-brand">Board Games</a>
-                </NavLink>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                        <li class="nav-item">
-                            <NavLink href="/home" style="text-decoration: none">
-                                <a class="nav-link">Начало</a>
-                            </NavLink>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="/catalog">Каталог</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#">Статистики</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="/contact">Свържи се с нас</a>
-                        </li>
-                        @if (isAdmin)
-                        {
-                            <li class="nav-item">
-                                <a class="nav-link" href="/game/create">Добави игра</a>
-                            </li>
-                        }
-                    </ul>
-                </div>
-            </div>
-        </nav>
-    </header>
+                <li class="nav-item">
+                    <a class="nav-link" href="/catalog">Каталог</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/reports">Статистики</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/contact">Свържи се с нас</a>
+                </li>
+                @if (isAdmin)
+                {
+                    <li class="nav-item">
+                        <a class="nav-link" href="/game/create">Добави игра</a>
+                    </li>
+                }
+            </ul>
+        </div>
+    </div>
+</nav>
 
     <section id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
         <ol class="carousel-indicators">
@@ -176,8 +160,7 @@
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
    @*  <scriptsrc="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min. js"></script> *@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-</body>
-</html>
+
     
 @inject IGameService gameService;
 @code{
