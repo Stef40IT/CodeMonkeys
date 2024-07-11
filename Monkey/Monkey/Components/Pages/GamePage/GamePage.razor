@@ -97,20 +97,6 @@
         </div>
     </div>
 </div>
-@if (game.Comments != null)
-{
-    <table>
-        <thead>
-        <td>Text</td>
-        <td>Hour</td>
-        </thead>
-        @foreach (var commnet in game?.Comments)
-        {
-            <td>@commnet.Text</td>
-            <td>@commnet.Hour</td>
-        }
-    </table>
-}
 
 <div class="rating">
     <input type="radio" id="star5" name="rating" value="5" /><label for="star5">&#9733;</label>
@@ -226,6 +212,7 @@ else
         await CommentService.AddCommentAsync(Comment);
         comments = new List<Comment>();
         await LoadComments();
+        NavManager.NavigateTo($"game/{Id}", forceLoad: true);
     }
 
     private async Task Add()
