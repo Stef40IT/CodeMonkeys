@@ -5,59 +5,85 @@
 @inject NavigationManager NavigationManager
 @inject IGameService gameService;
 @rendermode InteractiveServer
-<h3>AddGame</h3>
+<div class="field">
+    <div class="container">
+        <div class="content">
+            <div class="description">РЕДАКТИРАЙ ИГРА</div>
+            <div class="container-form">
+                <EditForm method="post" Model="Game" OnValidSubmit="UpdateGame" FormName="GameForm">
+                    <div>
+                        <div class="text">
+                            <div class="entry">
+                                <label>Заглавие на игра</label>
+                                <InputText @bind-Value="Game.Name"></InputText>
+                            </div>
+                            <br />
+                            <div class="entry">
+                                <label>Описание на игра</label>
+                                <InputText @bind-Value="Game.Description"></InputText>
+                            </div>
+                        </div>
+                        <br />
+                        <div class="count">
+                            <div class="entry">
+                                <label>Сложност</label>
+                                <InputNumber @bind-Value="Game.Difficulty" Min="1" Max="4"></InputNumber>
+                            </div>
+                            <br />
+                            <div class="entry">
+                                <label>Налични бройки</label>
+                                <InputNumber @bind-Value="Game.Count" Min="1"></InputNumber>
+                            </div>
+                        </div>
+                        <br />
 
-<EditForm method="post" Model="Game" OnValidSubmit="UpdateGame" FormName="GameForm">
-    <div>
-        <label>Заглавие на игра</label>
-        <InputText @bind-Value="Game.Name"></InputText>
+                        <div class="image-input">
+                            <div class="entry">
+                                <label>Изображение</label>
+                            </div>
 
-        <br />
-        <label>Описание на игра</label>
-        <InputText @bind-Value="Game.Description"></InputText>
 
-        <br />
-        <label>Трудност</label>
-        <InputNumber @bind-Value="Game.Difficulty"></InputNumber>
+                            <div class="file-upload-wrapper">
+                                <label class="file-upload-label">
+                                    Качете до @maxFileSize байтове:
 
-        <br />
-        <label>Налични бройки</label>
-        <InputNumber @bind-Value="Game.Count"></InputNumber>
+                                    <InputFile OnChange="LoadFiles" />
+                                </label>
+                            </div>
+                        </div>
 
-        <br />
-        <label>Изображение</label>
-        <p>
-            <label>
-                Качете до @maxFileSize байтове:
-                <InputFile OnChange="LoadFiles" />
-            </label>
-        </p>
-        @if (isLoading)
-        {
-            <p>Uploading...</p>
-        }
-        else
-        {
-            <ul>
-                @if (loadedFiles != null)
-                {
-                    <li>
-                        <ul>
-                            <li>Име на изображение: @loadedFiles.Name</li>
-                            <li>Последно променена: @loadedFiles.LastModified.ToString()</li>
-                            <li>Размер (битове): @loadedFiles.Size</li>
-                            <li>Тип съдържание: @loadedFiles.ContentType</li>
-                        </ul>
-                    </li>
-                }
-            </ul>
-        }
-        <br />
+
+                        @if (isLoading)
+                        {
+                            <p>Uploading...</p>
+                        }
+                        else
+                        {
+                            <ul class="filesLoaded">
+                                @if (loadedFiles != null)
+                                {
+                                    <li>
+                                        <ul>
+                                            <li>Име на изображение: @loadedFiles.Name</li>
+                                            <li>Последно променена: @loadedFiles.LastModified.ToString()</li>
+                                            <li>Размер (битове): @loadedFiles.Size</li>
+                                            <li>Тип съдържание: @loadedFiles.ContentType</li>
+                                        </ul>
+                                    </li>
+                                }
+                            </ul>
+                        }
+                        <br />
+                    </div>
+                    <div class="button1">
+                        <button type="submit" class="submit-btn" value="submit">Публикувай</button>
+                        <p role="status" class="statusMessage">@Message</p>
+                    </div>
+                </EditForm>
+            </div>
+        </div>
     </div>
-
-    <button type="submit">Редактирай</button>
-    <p role="status">@Message</p>
-</EditForm>
+</div>
 
 @code {
     [Parameter]
@@ -82,7 +108,7 @@
 
         if (!isAdmin)
         {
-            NavigationManager.NavigateTo("/");
+            NavigationManager.NavigateTo("/home");
         }
     }
 
