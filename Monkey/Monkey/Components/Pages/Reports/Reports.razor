@@ -44,7 +44,7 @@ else
         <div class="lists">
             <h2>Top 5 Highest Rated Games</h2>
             
-                @foreach (var game in top5HighestRated)
+                @* @foreach (var game in top5HighestRated)
                 {
                      <div class="game-card" @onclick="() => OpenGameDetails(game.Id)">
                             
@@ -53,7 +53,7 @@ else
                                 <div class="game-count">Средна оценка: @game.AverageRating</div>
                             </div>
                      </div>
-                }
+                } *@
             
         </div>
     </div>
@@ -80,10 +80,10 @@ else
             }
             GameList = (await gameService.GetAllGames()).ToList();
 
-            averageRating = GameList.Where(g => g.Raitings.Any()).Average(g => g.Raitings.Average(r => r.Rate));
+            //averageRating = GameList.Where(g => g.Raitings.Any()).Average(g => g.Raitings.Average(r => r.Rate));
             freeGamesCount = GameList.Count(g => !g.isBooked);
             top5MostPlayed = GameList.OrderByDescending(g => g.Count).Take(5).Select(g => (g.Name, g.Count, g.Id)).ToList();
-            top5HighestRated = GameList.Where(g => g.Raitings.Any()).OrderByDescending(g => g.Raitings.Average(r => r.Rate)).Take(5).Select(g => (g.Name, g.Raitings.Average(r => r.Rate), g.Id)).ToList();
+            //top5HighestRated = GameList.Where(g => g.Raitings.Any()).OrderByDescending(g => g.Raitings.Average(r => r.Rate)).Take(5).Select(g => (g.Name, g.Raitings.Average(r => r.Rate), g.Id)).ToList();
 
             loading = false;
         

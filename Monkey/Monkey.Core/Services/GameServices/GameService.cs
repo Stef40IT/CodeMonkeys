@@ -131,32 +131,30 @@ namespace Monkey.Core.Services.GameServices
             return await Repository.GetDb().Games.FirstOrDefaultAsync(g => g.Name == name);
         }
 
-        public async void UpdateCountDown(int id)
+        public async Task UpdateCountDown(Game entity)
         {
-            var entity = Repository.GetDb().Games.SingleOrDefault(g => g.Id == id);
             if (entity != null)
             {
                 entity.Count -= 1;
-                if (entity.Count == 0 && entity.isBooked == true)
-                {
-                    entity.isBooked = false;
-                }
-                await Repository.GetDb().SaveChangesAsync();
-            }
-        }
-        public async void UpdateCountUp(int id)
-        {
-            var entity = Repository.GetDb().Games.SingleOrDefault(g => g.Id == id);
-            if (entity != null)
-            {
-                entity.Count += 1;
-                if (entity.Count > 0 && entity.isBooked == false)
+                if (entity.Count == 0 && entity.isBooked == false)
                 {
                     entity.isBooked = true;
                 }
                 await Repository.GetDb().SaveChangesAsync();
             }
         }
+            public async Task UpdateCountUp(Game entity)
+            {
+                if (entity != null)
+                {
+                    entity.Count += 1;
+                    if (entity.Count > 0 && entity.isBooked == true)
+                    {
+                        entity.isBooked = false;
+                    }
+                    await Repository.GetDb().SaveChangesAsync();
+                }
+            }
 
         public async Task<Game>? GetGameById(int? id)
         {
