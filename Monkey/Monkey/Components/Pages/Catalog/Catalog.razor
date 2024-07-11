@@ -97,7 +97,7 @@
                                 <div class="game-difficulty">Difficulty: @game.Difficulty</div>
                             </div>
                             <div class="favorite-icon">
-                                <svg viewBox="0 0 24 24" width="24" height="24" class="@GetHeartClass(game.Id)" @onclick:stopPropagation @onclick="() => ToggleFavorite(game.Id)">
+                                <svg viewBox="0 0 24 24" width="24" height="24" class="@GetHeartClass(game.Id).Result" @onclick:stopPropagation @onclick="async () => await ToggleFavorite(game.Id)">
                                     <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41 0.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
                                 </svg>
                             </div>
@@ -121,31 +121,22 @@
     private List<GameGeneralInfoProjection> favoriteGamesList;
     private string selectedCriteria;
 
-    private string CurUserId;
+    private string CurrentUserId;
     private ApplicationUser user;
-    private Favorite fav;
-    private Game Game;
-    private HashSet<int> favoriteGames = new();
+
     bool isAdmin;
 
     protected override async Task OnInitializedAsync()
     {
-        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-        var user = authState.User;
-
-        isAdmin = user.IsInRole("Admin");
-
-
         GameList = (await gameService.GetAllGames()).Take(20).ToList();
         sortedGames = GameList;
         var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
         var userPrin = authState.User;
-        CurUserId = userPrin.FindFirstValue(ClaimTypes.NameIdentifier);
-        user = await UserManager.GetUserAsync(userPrin);
-        Game = new Game();
-        fav = new Favorite();
-        favoriteList = await favoriteService.GetFav(CurUserId);
-        favoriteGamesList = await favoriteService.GetFavProj(CurUserId);
+        CurrentUserId = userPrin.FindFirstValue(ClaimTypes.NameIdentifier);
+        favoriteList = await favoriteService.GetFav(CurrentUserId);
+        favoriteGamesList = await favoriteService.GetFavProj(CurrentUserId);
+        user = await userManager.GetUserAsync(userPrin);
+        isAdmin = userPrin.IsInRole("Admin");
     }
 
     private string SelectedCriteria
@@ -204,21 +195,21 @@
         else return 0;
     }
 
-    private async void ToggleFavorite(int gameId)
+    private async Task ToggleFavorite(int gameId)
     {
-        Game = (await gameService.GetGameById(gameId));
-        fav.User = user;
-        fav.Game = Game;
-        if (favoriteService.Contains(gameId, CurUserId).Result)
+        if (favoriteService.Contains(gameId, CurrentUserId).Result)
         {
-            //favoriteGames.Remove(gameId);
-            favoriteService.RemoveFromFavorites(fav);
+            
+            
+            await favoriteService.RemoveFromFavoritesAsync(CurrentUserId, gameId);
+            favoriteList = await favoriteService.GetFav(CurrentUserId);
         }
         else
         {
-            //favoriteGames.Add(gameId);
-            favoriteService.AddToFavorites(fav);
+            await favoriteService.AddToFavoritesAsync(CurrentUserId, gameId);
+            favoriteList = await favoriteService.GetFav(CurrentUserId);
         }
+        favoriteGamesList = await favoriteService.GetFavProj(CurrentUserId);
     }
     private async Task Delete(int id)
     {
@@ -231,7 +222,7 @@
         NavManager.NavigateTo($"game/edit/{id}");
     }
 
-    private string GetHeartClass(int gameId) 
+    private async Task<string> GetHeartClass(int gameId) 
     { 
         foreach(Favorite f in favoriteList)
         {

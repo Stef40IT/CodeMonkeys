@@ -73,20 +73,7 @@ namespace Monkey.Core.Services.FavoriteServices
             return result;
         }
 
-        public async Task AddToFavorites(Favorite favorite)
-        {
-            _context.Favorites.Add(favorite);
-            await _context.SaveChangesAsync();
-        }
-
-        public async Task RemoveFromFavorites(Favorite favorite)
-        {
-            if (favorite != null)
-            {
-                _context.Favorites.Remove(favorite);
-                await _context.SaveChangesAsync();
-            }
-        }
+        
 
         public async Task<bool> Contains(int gameId, string userId)
         {
