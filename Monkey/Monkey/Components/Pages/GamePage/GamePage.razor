@@ -89,7 +89,7 @@
                 </div>
                 <div class="form-field">
                     <label for="start-time">Час от:</label>
-                    <input type="datetime" id="start-time" name="start-time" required pattern="[0-9]{1,2}:[0-9]{2}" @bind="bookTime">
+                    <input type="datetime" id="start-time" name="start-time" required pattern="([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]" @bind="bookTime">
                 </div>
                 <div class="form-field">
                     <label for="end-date">Дата до:</label>
@@ -97,7 +97,7 @@
                 </div>
                 <div class="form-field">
                     <label for="end-time">Час до:</label>
-                    <input type="datetime" id="end-time" name="end-time" required pattern="[0-9]{1,2}:[0-9]{2}" @bind="returnTime">
+                    <input type="datetime" id="end-time" name="end-time" required pattern="([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]" @bind="returnTime">
                 </div>
                 <button type="submit" @onclick="Add"><b>@bookGame</b></button>
                 
