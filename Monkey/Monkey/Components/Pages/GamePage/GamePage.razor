@@ -37,7 +37,7 @@
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                 <li class="nav-item">
                             <NavLink href="/home" style="text-decoration: none">
-                                <a class="nav-link">Начало</a>
+                                <a class="nav-link">Начало</a>  
                             </NavLink>
                         </li>
                 <li class="nav-item">
@@ -69,7 +69,7 @@
 <div class="game-container">
     <div class="game-header">
         <div class="game-title">@gameName</div>
-        <div class="game-info">Сложност: @game.Difficulty | Оставащи: @game.Count</div>
+        <div class="game-info">Сложност: @game.Difficulty | Оставащи: @game.Count | Рейтинг:@AverageRating(GameList.FirstOrDefault(g=>g.Id == Id).Raitings).ToString("0.00")</div>
     </div>
     <div class="game-image-container">
         <img src="@game.Picture" class="game-image" />
@@ -170,6 +170,9 @@ else
     public Comment Comment { get; set; } = new Comment();
     private string errorMessage;
     public bool isAdmin;
+    private List<GameGeneralInfoProjection> GameList;
+    
+
 
     Rating? rating;
     private int ratingValue;
@@ -179,7 +182,7 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-
+        GameList = (await gameService.GetAllGames()).ToList();
         gameName = (await gameService.GetGameById(Id)).Name;
         game = await gameService.GetGameById(Id);
         reserv = new Reservation();
@@ -348,6 +351,11 @@ else
     private async void RateValue(int values)
     {
         ratingValue = values;
+    }
+    private double AverageRating(ICollection<Rating> ratings)
+    {
+        if (ratings.Count() != 0) return ratings.Average(r => r.Rate);
+        else return 0;
     }
 }
 
