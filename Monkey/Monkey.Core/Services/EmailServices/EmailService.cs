@@ -18,14 +18,25 @@ namespace Monkey.Core.Services.EmailServices
             {
                 _smtpUser = "danailovvpetar@gmail.com";
                 _smtpPass = "uwli ybwd uonu wvgp";
+                mailMessage.From.Add(new MailboxAddress(fromName, fromEmail));
+                mailMessage.To.Add(new MailboxAddress("Board GamesInc", "boardgamesrentalsinc@gmail.com"));
+                mailMessage.Subject = subject;
+                mailMessage.Body = new TextPart("plain")
+                {
+                    Text = message
+                };
             }
-            mailMessage.From.Add(new MailboxAddress(fromName, fromEmail));
-            mailMessage.To.Add(new MailboxAddress("Board GamesInc", "boardgamesrentalsinc@gmail.com"));
-            mailMessage.Subject = subject;
-            mailMessage.Body = new TextPart("plain")
+            else
             {
-                Text = message
-            };
+                mailMessage.From.Add(new MailboxAddress(fromName, fromEmail));
+                mailMessage.To.Add(new MailboxAddress("Board GamesInc", "boardgamesrentalsinc@gmail.com"));
+                mailMessage.Subject = subject;
+                mailMessage.Body = new TextPart("plain")
+                {
+                    Text = message + fromEmail
+                };
+            }
+
 
             using (var smtpClient = new MailKit.Net.Smtp.SmtpClient())
             {
