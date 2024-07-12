@@ -136,7 +136,7 @@ else
     <ul>
         @foreach (var comment in comments)
         {
-            <li>
+            <li class="mb-3">
                 <strong>@comment.User.UserName</strong> (@comment.Hour.ToString("g")):
                 <p>@comment.Text</p>
                 @if (isAdmin)

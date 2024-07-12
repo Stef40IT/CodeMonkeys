@@ -117,15 +117,14 @@
 .game-row {
     display: flex;
     gap: 20px;
-    justify-content: space-between;
 }
 
 .game-card {
+    width: 290px;
     border: 1px solid orange;
     border-radius: 5px;
     padding: 15px;
     text-align: center;
-    width: calc(33.33% - 20px);
     cursor: pointer;
     position: relative;
     overflow: hidden;
@@ -139,8 +138,9 @@
     }
 
 .game-image {
+    height: 307px;
+    object-fit: contain;
     max-width: 100%;
-    height: auto;
     border-radius: 5px;
 }
 
